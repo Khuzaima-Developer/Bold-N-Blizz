@@ -62,6 +62,11 @@ const url = "https://mnpcourier.com/cplight/qsr";
 
     await customersData(page);
 
+    page.on("dialog", async (dialog) => {
+      console.log(`Dialog detected: ${dialog.message()}`); // Log the dialog message
+      await dialog.dismiss(); // Dismiss the dialog
+    });
+
     // Extract customer IDs
     await getAllCustomersCN();
     let customerIds = await getAllCustomersCN();
@@ -70,10 +75,10 @@ const url = "https://mnpcourier.com/cplight/qsr";
     await addRefToCustomers();
 
     // setInterval(async () => {
-      await customersData(page);
-      await Customer.monitorTrackingData();
-      await Customer.deleteOldCustomers();
-      await addRefToCustomers();
+    await customersData(page);
+    await Customer.monitorTrackingData();
+    await Customer.deleteOldCustomers();
+    await addRefToCustomers();
     // }, 7 * 60 * 60 * 1000); // Run every 7 hours
 
     // Keep the browser open if you need to interact manually or close it after a certain time

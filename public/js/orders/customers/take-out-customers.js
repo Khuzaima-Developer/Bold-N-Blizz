@@ -40,6 +40,10 @@ async function fillDateInput(page) {
   // Wrap the process in a Promise
   return new Promise(async (resolve, reject) => {
     try {
+      page.on("dialog", async (dialog) => {
+        console.log(`Dialog detected: ${dialog.message()}`); // Log the dialog message
+        await dialog.dismiss(); // Dismiss the dialog
+      });
       // Simulate user interaction to set the date
       await page.evaluate(
         (selector, dateValue) => {

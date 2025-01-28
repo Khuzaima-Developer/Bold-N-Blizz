@@ -4,6 +4,10 @@ const scrapeCustomerTracking = require("../public/js/orders/customerTracking/ext
 const CustomerTracking = require("../models/customer-tracking.js");
 const moment = require("moment");
 const axios = require("axios");
+const https = require("https");
+const agent = new https.Agent({
+  rejectUnauthorized: false, // Disable SSL certificate validation
+});
 
 // Define customer schema
 
@@ -219,8 +223,34 @@ customerSchema.statics.deleteOldCustomers = async function () {
   }
 }; // Correct method name
 
+const fetchWithRetry = async (url, retries = 3, delay = 3000) => {
+  for (let attempt = 0; attempt < retries; attempt++) {
+    try {
+      const response = await axios.get(url, {
+        httpsAgent: agent,
+        timeout: 60000, // Set a long timeout of 1 minute per request
+      });
+      return response.data; // Return data if successful
+    } catch (error) {
+      if (attempt < retries - 1) {
+        console.log(
+          `Attempt ${attempt + 1} failed. Retrying in ${
+            delay / 1000
+          } seconds...`
+        );
+        await new Promise((resolve) => setTimeout(resolve, delay)); // Wait before retrying
+      } else {
+        console.error(
+          `Failed to fetch data from ${url} after ${retries} attempts: ${error.message}`
+        );
+        throw error; // Throw error after all retries fail
+      }
+    }
+  }
+};
+
 customerSchema.statics.monitorTrackingData = async function (
-  batchSize = 5,
+  batchSize = 2,
   delay = 5000
 ) {
   try {
@@ -238,9 +268,9 @@ customerSchema.statics.monitorTrackingData = async function (
 
       for (const CN of batch) {
         try {
-          // Fetch tracking data from the external API
-          const { data: newTrackingData } = await axios.get(`
-            https://www.mulphilog.com/tracking/${CN}`);
+          // Fetch tracking data from the external API with retries
+          const trackingDataUrl = `https://www.mulphilog.com/tracking/${CN}`;
+          const newTrackingData = await fetchWithRetry(trackingDataUrl);
 
           // Fetch existing tracking data from the database
           const existingTrackingData = await this.findOne({
@@ -256,7 +286,7 @@ customerSchema.statics.monitorTrackingData = async function (
             existingTrackingData.Status !== newTrackingData.Status;
 
           if (hasChanged) {
-            // Update the data only if changes are detected
+            // Update the data if changes are detected
             await this.updateOne(
               { CN },
               {
@@ -268,19 +298,18 @@ customerSchema.statics.monitorTrackingData = async function (
                   updatedAt: Date.now(),
                 },
               },
-              { upsert: true } // Create a new record if it doesn't exist
+              { upsert: true }
             );
             console.log(`Tracking data for ID ${CN} updated.`);
           }
         } catch (err) {
-          console.error(`
-            Error processing tracking ID ${CN}: ${err.message}`);
+          console.error(`Error processing tracking ID ${CN}: ${err.message}`);
         }
       }
 
-      // Introduce a delay between batches to avoid overwhelming resources
+      // Introduce a delay between batches
       if (i + batchSize < CNs.length) {
-        await new Promise((resolve) => setTimeout(resolve, delay));
+        await new Promise((resolve) => setTimeout(resolve, delay)); // Wait before processing the next batch
       }
     }
 
