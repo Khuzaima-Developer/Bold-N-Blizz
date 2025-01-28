@@ -66,16 +66,16 @@ async function scrapeCustomerTracking(customerIds) {
     ],
   });
 
-  const MAX_PARALLEL_PAGES = 10;
+  const MAX_PARALLEL_PAGES = 5; // Reduce the parallel pages for lower CPU usage
+  const DELAY_BETWEEN_BATCHES = 5000; // Add a longer delay between batches
 
-  // Define the batch processing function
   const processBatch = async (batch) => {
     const promises = batch.map(async (customerId) => {
       let page;
       try {
-        page = await browser.newPage(); // Create a new page
+        page = await browser.newPage();
 
-        // Improve performance by blocking unnecessary requests
+        // Block unnecessary requests to save CPU and bandwidth
         await page.setRequestInterception(true);
         page.on("request", (request) => {
           const resourceType = request.resourceType();
@@ -86,10 +86,10 @@ async function scrapeCustomerTracking(customerIds) {
           }
         });
 
-        // Navigate to the tracking page
+        // Load the tracking page with a reasonable timeout
         await page.goto(`https://www.mulphilog.com/tracking/${customerId}`, {
-          waitUntil: "networkidle0",
-          timeout: 120000, // Reasonable timeout
+          waitUntil: "domcontentloaded",
+          timeout: 60000, // Shorter timeout to prevent stuck tasks
         });
 
         // Process the customer tracking data
@@ -100,7 +100,6 @@ async function scrapeCustomerTracking(customerIds) {
           error.message
         );
       } finally {
-        // Ensure the page is closed properly
         if (page) {
           try {
             await page.close();
@@ -114,15 +113,20 @@ async function scrapeCustomerTracking(customerIds) {
       }
     });
 
-    await Promise.all(promises); // Wait for all promises to complete
+    // Use Promise.allSettled to ensure all tasks complete, even if some fail
+    await Promise.allSettled(promises);
   };
 
   try {
     // Process customer IDs in batches
     for (let i = 0; i < customerIds.length; i += MAX_PARALLEL_PAGES) {
       const batch = customerIds.slice(i, i + MAX_PARALLEL_PAGES);
-      await processBatch(batch); // Process each batch
-      await new Promise((resolve) => setTimeout(resolve, 1000)); // Add a 1-second delay between batches
+      await processBatch(batch);
+
+      // Add delay to reduce CPU load further
+      await new Promise((resolve) =>
+        setTimeout(resolve, DELAY_BETWEEN_BATCHES)
+      );
     }
   } catch (error) {
     console.error(
@@ -130,14 +134,12 @@ async function scrapeCustomerTracking(customerIds) {
       error.message
     );
   } finally {
-    // Close the browser after all batches are processed
     try {
       await browser.close();
       console.log("Browser closed successfully.");
     } catch (err) {
       console.warn("Error while closing the browser:", err.message);
     }
-
     console.log("scrapeCustomerTracking complete.");
   }
 }

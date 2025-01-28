@@ -3,6 +3,7 @@ const Schema = mongoose.Schema;
 const scrapeCustomerTracking = require("../public/js/orders/customerTracking/extract-customer-tracking.js");
 const CustomerTracking = require("../models/customer-tracking.js");
 const moment = require("moment");
+const axios = require("axios");
 
 // Define customer schema
 
@@ -217,6 +218,77 @@ customerSchema.statics.deleteOldCustomers = async function () {
     throw err;
   }
 }; // Correct method name
+
+customerSchema.statics.monitorTrackingData = async function (
+  batchSize = 5,
+  delay = 5000
+) {
+  try {
+    // Fetch all distinct tracking IDs
+    const CNs = await this.distinct("CN");
+
+    if (!CNs.length) {
+      console.log("No tracking IDs found.");
+      return;
+    }
+
+    // Process tracking IDs in batches
+    for (let i = 0; i < CNs.length; i += batchSize) {
+      const batch = CNs.slice(i, i + batchSize);
+
+      for (const CN of batch) {
+        try {
+          // Fetch tracking data from the external API
+          const { data: newTrackingData } = await axios.get(`
+            https://www.mulphilog.com/tracking/${CN}`);
+
+          // Fetch existing tracking data from the database
+          const existingTrackingData = await this.findOne({
+            CN,
+          }).lean();
+
+          // Check if the data has changed
+          const hasChanged =
+            !existingTrackingData ||
+            existingTrackingData.Date !== newTrackingData.Date ||
+            existingTrackingData.Details !== newTrackingData.Details ||
+            existingTrackingData.Location !== newTrackingData.Location ||
+            existingTrackingData.Status !== newTrackingData.Status;
+
+          if (hasChanged) {
+            // Update the data only if changes are detected
+            await this.updateOne(
+              { CN },
+              {
+                $set: {
+                  Date: newTrackingData.Date,
+                  Details: newTrackingData.Details,
+                  Location: newTrackingData.Location, // Provide a default location if not defined
+                  Status: newTrackingData.Status,
+                  updatedAt: Date.now(),
+                },
+              },
+              { upsert: true } // Create a new record if it doesn't exist
+            );
+            console.log(`Tracking data for ID ${CN} updated.`);
+          }
+        } catch (err) {
+          console.error(`
+            Error processing tracking ID ${CN}: ${err.message}`);
+        }
+      }
+
+      // Introduce a delay between batches to avoid overwhelming resources
+      if (i + batchSize < CNs.length) {
+        await new Promise((resolve) => setTimeout(resolve, delay));
+      }
+    }
+
+    console.log("monitorTrackingData process completed.");
+  } catch (err) {
+    console.error("Error in monitorTrackingData:", err.message);
+  }
+};
 
 const Customer = mongoose.model("Customer", customerSchema);
 
