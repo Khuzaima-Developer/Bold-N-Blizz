@@ -6,28 +6,47 @@ document.addEventListener("DOMContentLoaded", () => {
   const tbody = document.querySelector(".table tbody");
   const rows = Array.from(tbody.querySelectorAll("tr"));
 
+  // Get all <th> elements to determine column index
+  const headerColumns = Array.from(
+    document.querySelectorAll(".table thead td")
+  );
+
   // Listen for input changes on each search field
   searchInputs.forEach((input) => {
-    input.addEventListener("input", filterTable);
+    input.addEventListener("input", () => {
+      filterTable();
+    });
   });
 
   // Function to filter the table based on search input
   function filterTable() {
-    const consignmentFilter = searchInputs[0].value.toLowerCase();
-    const customerFilter = searchInputs[1].value.toLowerCase();
-    const codFilter = searchInputs[2].value.toLowerCase();
+    const filteredRows = rows.filter((row, rowIndex) => {
+      return Array.from(searchInputs).every((input, inputIndex) => {
+        const filterValue = input.value.toLowerCase().trim();
 
-    const filteredRows = rows.filter((row) => {
-      const consignmentNumber = row.children[1].textContent.toLowerCase();
-      const customerName = row.children[2].textContent.toLowerCase();
-      const codAmount = row.children[3].textContent.toLowerCase();
+        if (!filterValue) {
+          return true; // Skip empty filters
+        }
 
-      // Check if the row matches the search criteria
-      const matchesConsignment = consignmentNumber.includes(consignmentFilter);
-      const matchesCustomer = customerName.includes(customerFilter);
-      const matchesCOD = codAmount.includes(codFilter);
+        // Find the corresponding column index of the input
+        const columnIndex = headerColumns.findIndex((th) => th.contains(input));
 
-      return matchesConsignment && matchesCustomer && matchesCOD;
+        if (columnIndex === -1) {
+          console.log("  Column index not found! Skipping...");
+          return true;
+        }
+
+        const cell = row.children[columnIndex]; // Get the cell in the correct column
+        if (!cell) {
+          return false;
+        }
+
+        const cellValue = cell.textContent.toLowerCase().trim();
+
+        const match = cellValue.includes(filterValue);
+
+        return match; // Check if cell contains the input value
+      });
     });
 
     // Update the table with filtered rows

@@ -1,5 +1,5 @@
 {
-  "name": "my-project",
+  "name": "bold-n-blizz",
   "version": "1.0.0",
   "scripts": {
     "watch:imports": "node ./node_modules/scss-builder/auto-import.js",
@@ -10,7 +10,7 @@
     "prefix:css": "postcss public/css/style.comp.css -o public/css/style.prefix.css --use autoprefixer --autoprefixer.grid=true",
     "compress:css": "postcss public/css/style.prefix.css -o public/css/style.min.css --use cssnano",
     "build:css": "npm-run-all compile:sass prefix:css compress:css",
-    "dev": "nodemon app.js",
+    "dev": "node app.js",
     "start": "node app.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
@@ -34,7 +34,8 @@
     "puppeteer-extra-plugin-stealth": "^2.11.2",
     "request-promise": "^0.0.1",
     "scss-builder": "^1.0.4",
-    "short-express": "^1.0.4"
+    "short-express": "^1.0.4",
+    "vercel": "^39.4.1"
   },
   "type": "commonjs",
   "browserslist": [

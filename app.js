@@ -20,7 +20,7 @@ const ExpressError = require("./utils/error-handler/ExpressError");
 const customerData = require("./public/js/orders/scraper.js");
 
 // port
-let port = process.env.PORT || 8080;
+let port = process.env.PORT;
 const atlasDbUrl = process.env.ATLAS_DB_URL 
 
 // route variables
@@ -82,7 +82,7 @@ app.engine("ejs", ejsMate);
 
 // Listen method
 app.listen(port, () => {
-  console.log("App is listening on port 8080");
+  console.log(`App is listening on port ${port}`);
 });
 
 // res.locals
@@ -90,7 +90,7 @@ app.use((req, res, next) => {
   res.locals.success = req.flash("success");
   res.locals.error = req.flash("error");
   next();
-});
+});   
 
 // routes
 app.use("/orders", ordersPath);
