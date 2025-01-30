@@ -13,7 +13,9 @@ const { verifyDateInput, fillDateInput } = require("./take-out-customers.js");
 async function customersData(page) {
   await fillDateInput(page);
 
-  setTimeout(await verifyDateInput(page), 1000);
+  setTimeout(async () => {
+    await verifyDateInput(page); // Your function will be called after 1 second
+  }, 1000);
 
   async function scrapeCustomers(page) {
     try {
