@@ -89,7 +89,7 @@ async function scrapeCustomerTracking(customerIds) {
         // Load the tracking page with a reasonable timeout
         await page.goto(`https://www.mulphilog.com/tracking/${customerId}`, {
           waitUntil: "domcontentloaded",
-          timeout: 60000, // Shorter timeout to prevent stuck tasks
+          // timeout: 60000, // Shorter timeout to prevent stuck tasks
         });
 
         // Process the customer tracking data

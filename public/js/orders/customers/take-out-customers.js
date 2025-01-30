@@ -29,8 +29,13 @@ function todayDate() {
   return `${day}/${month}/${year}`;
 }
 async function handleDialog(page) {
+  // Set a flag to track if a dialog was triggered
+  let dialogDetected = false;
+
+  // Listen for dialog events
   page.on("dialog", async (dialog) => {
     try {
+      dialogDetected = true; // Set flag to true when a dialog is detected
       console.log("Dialog detected:", dialog.message());
 
       if (!dialog.handled) {
@@ -43,6 +48,13 @@ async function handleDialog(page) {
       console.error("Error handling dialog:", error.message);
     }
   });
+
+  // Check if any dialog was detected, and only proceed with dialog handling if true
+  await new Promise((resolve) => setTimeout(resolve, 1000)); // Wait for 1 second to check if any dialog has appeared
+
+  if (!dialogDetected) {
+    console.log("No dialog detected, skipping dialog handling.");
+  }
 }
 
 async function fillDateInput(page) {
@@ -50,8 +62,6 @@ async function fillDateInput(page) {
 
   return new Promise(async (resolve, reject) => {
     try {
-      await handleDialog(page);
-
       // Simulate user interaction to set the date
       await page.evaluate(
         (selector, dateValue) => {
@@ -77,6 +87,7 @@ async function fillDateInput(page) {
         );
         resolve();
       }, 1000);
+      console.log("fillDateInput")
     } catch (error) {
       console.error("Error in fillDateInput:", error);
       reject(error);
@@ -108,6 +119,8 @@ async function verifyDateInput(page) {
     await page.goto(targetURL, { waitUntil: "load" });
     await fillDateInput(page);
   }
+  console.log("verifyDateInput")
+  await handleDialog(page);
 }
 
 module.exports = {

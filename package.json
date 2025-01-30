@@ -29,7 +29,6 @@
     "puppeteer-core": "^24.0.0",
     "puppeteer-extra": "^3.3.6",
     "puppeteer-extra-plugin-stealth": "^2.11.2",
-    "railway": "^2.0.17",
     "request-promise": "^0.0.1",
     "scss-builder": "^1.0.4",
     "short-express": "^1.0.4"
