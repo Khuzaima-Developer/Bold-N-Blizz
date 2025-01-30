@@ -3,10 +3,7 @@ const {
   pageData,
   continuouslyCheckAndUpdateData,
 } = require("./customers-extracting.js");
-const {
-  verifyDateInput,
-  fillDateInput,
-} = require("./take-out-customers.js");
+const { verifyDateInput, fillDateInput } = require("./take-out-customers.js");
 
 /**
  * Scrapes data from two pages (if navigation is required) and logs them.
@@ -16,18 +13,23 @@ const {
 async function customersData(page) {
   await fillDateInput(page);
 
-  await verifyDateInput(page);
+  setTimeout(await verifyDateInput(page), 1000);
 
   async function scrapeCustomers(page) {
     try {
+      console.log("finding table");
       const nextPageBtn =
         "#app > div > div.main-content > section > div.card > div.row.mt-3.pb-2 > div > div.justify-content-center > ul > li:nth-child(4) > a";
       const isTable = "table tbody";
 
       // Wait for the table to be available before scraping
-      await page.waitForSelector(isTable, { visible: true }, { setTimeout: 10000, timeout: 100000 });
+      await page.waitForSelector(
+        isTable,
+        { visible: true },
+        { setTimeout: 10000, timeout: 100000 }
+      );
 
-      console.log("func is executing")
+      console.log("func is executing");
       setTimeout(async () => {
         while (true) {
           // Extract data from the current page using Cheerio
