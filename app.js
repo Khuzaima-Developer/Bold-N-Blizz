@@ -28,8 +28,6 @@ const ordersPath = require("./routes/orders.js");
 
 async function main() {
   await mongoose.connect(atlasDbUrl, {
-    useNewUrlParser: true,
-    useUnifiedTopology: true,
     tlsAllowInvalidCertificates: true, // Add this option
   });
 }
