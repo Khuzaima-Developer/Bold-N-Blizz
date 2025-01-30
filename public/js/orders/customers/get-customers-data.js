@@ -25,8 +25,9 @@ async function customersData(page) {
       const isTable = "table tbody";
 
       // Wait for the table to be available before scraping
-      await page.waitForSelector(isTable, { visible: true });
+      await page.waitForSelector(isTable, { visible: true }, { setTimeout: 10000, timeout: 100000 });
 
+      console.log("func is executing")
       setTimeout(async () => {
         while (true) {
           // Extract data from the current page using Cheerio
