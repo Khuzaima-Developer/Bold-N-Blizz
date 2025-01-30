@@ -41,8 +41,18 @@ async function fillDateInput(page) {
   return new Promise(async (resolve, reject) => {
     try {
       page.on("dialog", async (dialog) => {
-        console.log(`Dialog detected: ${dialog.message()}`); // Log the dialog message
-        await dialog.dismiss(); // Dismiss the dialog
+        try {
+          console.log("Dialog detected:", dialog.message());
+
+          if (!dialog.handled) {
+            await dialog.dismiss();
+            console.log("Dialog dismissed.");
+          } else {
+            console.log("Dialog was already handled.");
+          }
+        } catch (error) {
+          console.error("Error handling dialog:", error.message);
+        }
       });
       // Simulate user interaction to set the date
       await page.evaluate(
@@ -85,8 +95,18 @@ async function verifyDateInput(page) {
   // Function to get the value from the input field
 
   page.on("dialog", async (dialog) => {
-    console.log(`Dialog detected: ${dialog.message()}`); // Log the dialog message
-    await dialog.dismiss(); // Dismiss the dialog
+    try {
+      console.log("Dialog detected:", dialog.message());
+
+      if (!dialog.handled) {
+        await dialog.dismiss();
+        console.log("Dialog dismissed.");
+      } else {
+        console.log("Dialog was already handled.");
+      }
+    } catch (error) {
+      console.error("Error handling dialog:", error.message);
+    }
   });
 
   let currentDateValue = await page.evaluate((selector) => {
