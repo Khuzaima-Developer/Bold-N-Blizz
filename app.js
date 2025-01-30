@@ -21,13 +21,17 @@ const customerData = require("./public/js/orders/scraper.js");
 
 // port
 let port = process.env.PORT;
-const atlasDbUrl = process.env.ATLAS_DB_URL 
+const atlasDbUrl = process.env.ATLAS_DB_URL;
 
 // route variables
 const ordersPath = require("./routes/orders.js");
 
 async function main() {
-  await mongoose.connect(atlasDbUrl);
+  await mongoose.connect(atlasDbUrl, {
+    useNewUrlParser: true,
+    useUnifiedTopology: true,
+    tlsAllowInvalidCertificates: true, // Add this option
+  });
 }
 
 main() // call the main function to connect to MongoDB
@@ -39,17 +43,17 @@ main() // call the main function to connect to MongoDB
     console.error(error); // Log the actual error for debugging
   });
 
-  let store = MongoStore.create({
-    mongoUrl: atlasDbUrl,
-    crypto: {
-      secret: process.env.SESSION_SECRET_KEY,
-    },
-    touchAfter: 24 * 60 * 60,
-  })
+let store = MongoStore.create({
+  mongoUrl: atlasDbUrl,
+  crypto: {
+    secret: process.env.SESSION_SECRET_KEY,
+  },
+  touchAfter: 24 * 60 * 60,
+});
 
-  store.on("error", function (e) {
-    console.log("Session Store Error", e)
-  })
+store.on("error", function (e) {
+  console.log("Session Store Error", e);
+});
 
 // session options
 let sessionOptions = {
@@ -63,7 +67,7 @@ let sessionOptions = {
     httpOnly: true,
   },
 };
- 
+
 // use methods
 app.use(express.static(path.join(__dirname, "/public")));
 app.use("/utils", express.static(path.join(__dirname, "/utils")));
@@ -90,7 +94,7 @@ app.use((req, res, next) => {
   res.locals.success = req.flash("success");
   res.locals.error = req.flash("error");
   next();
-});   
+});
 
 // routes
 app.use("/orders", ordersPath);
