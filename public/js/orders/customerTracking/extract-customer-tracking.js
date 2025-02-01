@@ -56,7 +56,6 @@ async function customerTrackingData(page, customerId) {
  * Scrape customer tracking data in batches to optimize the process.
  * @param {Array<string>} customerIds - Array of customer IDs to scrape.
  */
-
 async function scrapeCustomerTracking(customerIds) {
   const browser = await puppeteer.launch({
     headless: true,
@@ -67,8 +66,8 @@ async function scrapeCustomerTracking(customerIds) {
     ],
   });
 
-  const MAX_PARALLEL_PAGES = 5; // Reduce CPU usage
-  const DELAY_BETWEEN_BATCHES = 5000; // Delay between batches
+  const MAX_PARALLEL_PAGES = 5;
+  const DELAY_BETWEEN_BATCHES = 5000;
 
   const processBatch = async (batch) => {
     const promises = batch.map(async (customerId) => {
@@ -77,7 +76,6 @@ async function scrapeCustomerTracking(customerIds) {
       try {
         page = await browser.newPage();
 
-        // Block unnecessary requests to save CPU and bandwidth
         await page.setRequestInterception(true);
         page.on("request", (request) => {
           const resourceType = request.resourceType();
@@ -89,7 +87,7 @@ async function scrapeCustomerTracking(customerIds) {
         });
 
         // Validate URL before navigating
-        const validUrl = await fetchWithRetry(customerUrl);
+        const validUrl = await fetchWithRetry(customerUrl, 3, 3000, 3, page); // Pass `page` for retry logic
         if (!validUrl) {
           console.error(
             `Skipping Customer ID ${customerId} due to invalid URL.`
@@ -97,43 +95,12 @@ async function scrapeCustomerTracking(customerIds) {
           return;
         }
 
-        // **NEW: Retry logic for Puppeteer navigation**
-        const maxPageRetries = 3;
-        for (let attempt = 0; attempt < maxPageRetries; attempt++) {
-          try {
-            await page.goto(validUrl, {
-              waitUntil: "domcontentloaded",
-              timeout: 300000, // 300 seconds timeout
-            });
-            break; // Success! Break out of retry loop
-          } catch (error) {
-            console.error(
-              `Attempt ${attempt + 1} failed for ${customerId}: ${
-                error.message
-              }`
-            );
-            if (attempt < maxPageRetries - 1) {
-              console.log(
-                `Retrying page load for ${customerId} in 5 seconds...`
-              );
-              await new Promise((resolve) => setTimeout(resolve, 5000));
-            } else {
-              console.error(
-                `Failed to load page for ${customerId} after ${maxPageRetries} attempts.`
-              );
-              return; // Skip this customer
-            }
-          }
-        }
-
-        // Process the customer tracking data
+        // Process the customer tracking data after page load
         await customerTrackingData(page, customerId);
       } catch (error) {
         console.error(
           `Error processing Customer ID ${customerId}: ${error.message}`
         );
-        console.log("Retrying in 5 seconds...");
-        await fetchWithRetry(customerUrl);
       } finally {
         if (page) {
           try {
@@ -147,11 +114,17 @@ async function scrapeCustomerTracking(customerIds) {
       }
     });
 
-    await Promise.allSettled(promises);
+    const results = await Promise.allSettled(promises);
+    results.forEach((result, index) => {
+      if (result.status === "rejected") {
+        console.error(`Customer ID ${batch[index]} failed: ${result.reason}`);
+      } else {
+        console.log(`Customer ID ${batch[index]} processed successfully.`);
+      }
+    });
   };
 
   try {
-    // Process customer IDs in batches
     for (let i = 0; i < customerIds.length; i += MAX_PARALLEL_PAGES) {
       const batch = customerIds.slice(i, i + MAX_PARALLEL_PAGES);
       await processBatch(batch);
@@ -171,7 +144,6 @@ async function scrapeCustomerTracking(customerIds) {
     console.log("scrapeCustomerTracking complete.");
   }
 }
-
 // Example: Mock `customerTrackingData` function
 
 module.exports = scrapeCustomerTracking;
