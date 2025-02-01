@@ -129,7 +129,6 @@ async function scrapeCustomerTracking(customerIds) {
 
         // Process the customer tracking data
         await customerTrackingData(page, customerId);
-        console.log(`Processed customer ${customerId}`);
       } catch (error) {
         console.error(
           `Error processing Customer ID ${customerId}: ${error.message}`

@@ -28,10 +28,10 @@ async function addRefToCustomers() {
 
           // Save the updated Customer document
           await customer.save();
+          console.log(`tracking id added to ${customer.trackingId}`);
         }
       }
     }
-    console.log("Add ref to customers");
   } catch (error) {
     console.error("Error adding references to customers:", error.message);
   }
@@ -92,16 +92,6 @@ async function extractDataWithCheerio(page) {
 
   // Always return an array, even if it's empty
   return rowTexts;
-}
-
-async function continuouslyCheckAndUpdateData(page) {
-  // Check data every 1 minute (60000 milliseconds)
-  setInterval(async () => {
-    await extractDataWithCheerio(page);
-  }, 6000000); // You can adjust the interval as needed (e.g., every 1 minute)
-
-  // If you want to run the first extraction immediately
-  await extractDataWithCheerio(page);
 }
 
 async function pageData(page) {

@@ -17,7 +17,6 @@ async function customersData(page) {
 
   async function scrapeCustomers(page) {
     try {
-      console.log("finding table");
       const nextPageBtn =
         "#app > div > div.main-content > section > div.card > div.row.mt-3.pb-2 > div > div.justify-content-center > ul > li:nth-child(4) > a";
       const isTable = "table tbody";
@@ -30,8 +29,6 @@ async function customersData(page) {
         { visible: true },
         { timeout: 60 * 1000 }
       );
-
-      console.log("func is executing");
       setTimeout(async () => {
         while (true) {
           // Extract data from the current page using Cheerio
@@ -48,8 +45,6 @@ async function customersData(page) {
           // Wait for the page to load before continuing the loop
         }
       }, 1000);
-
-      await continuouslyCheckAndUpdateData(page);
       // Log the combined data collected from all pages
     } catch (error) {
       console.error("Error occurred while scraping:", error.message);

@@ -41,8 +41,6 @@ async function handleDialog(page) {
       if (!dialog.handled) {
         await dialog.dismiss();
         console.log("Dialog dismissed.", dialog.message());
-      } else {
-        console.log("Dialog was already handled.");
       }
     } catch (error) {
       console.error("Error handling dialog:", error.message);
@@ -84,8 +82,6 @@ async function fillDateInput(page) {
         const element = document.querySelector(selector);
         return element ? element.value : 'Element not found';
       }, dateSelector); // Replace with the actual selector
-
-      console.log("Date input filled:", dateValue);
 
       setTimeout(async () => {
         await page.click(
