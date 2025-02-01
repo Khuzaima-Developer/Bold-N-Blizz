@@ -118,7 +118,7 @@ module.exports.undelivers = async (req, res, next) => {
 
     // Calculate the cutoff date (3 days ago)
     let cutoffDate = new Date(today);
-    cutoffDate.setDate(today.getDate() - 3);
+    cutoffDate.setDate(today.getDate() - 4);
 
     // Fetch all customers
     let customers = await Customer.find({});
