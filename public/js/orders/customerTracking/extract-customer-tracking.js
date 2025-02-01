@@ -73,6 +73,7 @@ async function scrapeCustomerTracking(customerIds) {
   const processBatch = async (batch) => {
     const promises = batch.map(async (customerId) => {
       let page;
+      const customerUrl = `https://www.mulphilog.com/tracking/${customerId}`;
       try {
         page = await browser.newPage();
 
@@ -86,8 +87,6 @@ async function scrapeCustomerTracking(customerIds) {
             request.continue();
           }
         });
-
-        const customerUrl = `https://www.mulphilog.com/tracking/${customerId}`;
 
         // Validate URL before navigating
         const validUrl = await fetchWithRetry(customerUrl);
@@ -133,6 +132,7 @@ async function scrapeCustomerTracking(customerIds) {
         console.error(
           `Error processing Customer ID ${customerId}: ${error.message}`
         );
+        console.log("Retrying in 5 seconds...");
         await fetchWithRetry(customerUrl);
       } finally {
         if (page) {

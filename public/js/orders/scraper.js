@@ -82,9 +82,9 @@ const url = "https://mnpcourier.com/cplight/qsr";
       // Extract customer IDs
       await getAllCustomersCN();
       let customerIds = await getAllCustomersCN();
-
       await scrapeCustomerTracking(customerIds);
       await Customer.deleteOldCustomers();
+      
     }, 10000);
     // Keep the browser open if you need to interact manually or close it after a certain time
     // await browser.close();

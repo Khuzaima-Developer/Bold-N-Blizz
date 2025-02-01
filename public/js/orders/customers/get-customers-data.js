@@ -52,7 +52,7 @@ async function customersData(page) {
         }
       }, 1000);
       // Log the combined data collected from all pages
-      console.log("Found customer data");
+      console.log("Customers data founded");
     } catch (error) {
       console.error("Error occurred while scraping:", error.message);
     }

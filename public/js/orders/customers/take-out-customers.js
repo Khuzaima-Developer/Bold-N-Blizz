@@ -49,10 +49,6 @@ async function handleDialog(page) {
 
   // Check if any dialog was detected, and only proceed with dialog handling if true
   await new Promise((resolve) => setTimeout(resolve, 1000)); // Wait for 1 second to check if any dialog has appeared
-
-  if (!dialogDetected) {
-    console.log("No dialog detected, skipping dialog handling.");
-  }
 }
 
 async function fillDateInput(page) {
