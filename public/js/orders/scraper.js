@@ -33,8 +33,6 @@ const url = "https://mnpcourier.com/cplight/qsr";
     // Open the login page
     await page.goto("https://mnpcourier.com/cplight/login");
 
-    console.log("Login page");
-
     // Fill in the login credentials
     await page.type(
       "#app > section > div > div > div > div.card.card-primary > form > div > div:nth-child(1) > input",
@@ -86,7 +84,6 @@ const url = "https://mnpcourier.com/cplight/qsr";
       let customerIds = await getAllCustomersCN();
 
       await scrapeCustomerTracking(customerIds);
-      await addRefToCustomers();
       await Customer.deleteOldCustomers();
     }, 10000);
     // Keep the browser open if you need to interact manually or close it after a certain time
