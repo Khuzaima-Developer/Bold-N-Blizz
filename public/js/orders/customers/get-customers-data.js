@@ -20,7 +20,14 @@ async function customersData(page) {
         "#app > div > div.main-content > section > div.card > div.row.mt-3.pb-2 > div > div.justify-content-center > ul > li:nth-child(4) > a";
       const isTable = "table tbody";
 
-      const findTable = await page.$("table tbody");
+      const findTable = await page.$(isTable);
+
+      if (!findTable) {
+        console.log("⚠️ Table not found! Retrying...");
+        await fillDateInput(page); // Refill the date input
+        await verifyDateInput(page);
+        return await scrapeCustomers(page); // Retry scraping
+      }
 
       // Wait for the table to be available before scraping
       await page.waitForSelector(
@@ -45,6 +52,7 @@ async function customersData(page) {
         }
       }, 1000);
       // Log the combined data collected from all pages
+      console.log("Found customer data");
     } catch (error) {
       console.error("Error occurred while scraping:", error.message);
     }
