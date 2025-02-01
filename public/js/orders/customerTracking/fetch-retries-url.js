@@ -4,8 +4,6 @@ const agent = new https.Agent({
   rejectUnauthorized: false, // Disable SSL certificate validation
 });
 
-const axios = require("axios");
-
 const fetchWithRetry = async (
   url,
   retries = 3,
