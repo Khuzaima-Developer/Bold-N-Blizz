@@ -23,7 +23,7 @@ const url = "https://mnpcourier.com/cplight/qsr";
       ],
 
       executablePath: process.env.PUPPETEER_EXECUTABLE_PATH || undefined,
-      timeout: 100000
+      timeout: 100000,
     });
     const page = await browser.newPage();
     await page.setUserAgent(
@@ -74,14 +74,19 @@ const url = "https://mnpcourier.com/cplight/qsr";
     setTimeout(async () => {
       await customersData(page);
 
-      await browser.close();
+      function resetInactivityTimer() {
+        setTimeout(async () => {
+          await browser.close();
+          console.log("✅ Browser closed due to inactivity.");
+        }, 60000); // 60 seconds (1 minute)
+      }
+      resetInactivityTimer();
 
       // Extract customer IDs
       await getAllCustomersCN();
       let customerIds = await getAllCustomersCN();
       await scrapeCustomerTracking(customerIds);
       await Customer.deleteOldCustomers();
-
     }, 10000);
     // Keep the browser open if you need to interact manually or close it after a certain time
     // await browser.close();
