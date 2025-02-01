@@ -74,17 +74,14 @@ const url = "https://mnpcourier.com/cplight/qsr";
     setTimeout(async () => {
       await customersData(page);
 
-      page.on("dialog", async (dialog) => {
-        console.log(`Dialog detected: ${dialog.message()}`); // Log the dialog message
-        await dialog.dismiss(); // Dismiss the dialog
-      });
+      await browser.close();
 
       // Extract customer IDs
       await getAllCustomersCN();
       let customerIds = await getAllCustomersCN();
       await scrapeCustomerTracking(customerIds);
       await Customer.deleteOldCustomers();
-      
+
     }, 10000);
     // Keep the browser open if you need to interact manually or close it after a certain time
     // await browser.close();
