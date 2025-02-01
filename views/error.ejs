@@ -17,3 +17,11 @@
     <%= err.message %>
   </h4>
 </div>
+<%- include("./layouts/boilerplate-links.ejs") %> 
+<%layout("/layouts/boilerplate.ejs") %>
+
+<div class="alert alert-danger d-flex align-items-center col-6 offset-3 mt-3" role="alert">
+  <h4 class="alert-heading">
+    <%= err.message %>
+  </h4>
+</div>

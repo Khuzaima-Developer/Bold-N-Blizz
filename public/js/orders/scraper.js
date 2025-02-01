@@ -1,7 +1,6 @@
 const puppeteer = require("puppeteer");
 const { customersData } = require("./customers/get-customers-data.js");
 const Customer = require("../../../models/customers.js");
-const CustomerTracking = require("../../../models/customer-tracking.js");
 const scrapeCustomerTracking = require("./customerTracking/extract-customer-tracking.js");
 const {
   getAllCustomersCN,
@@ -22,8 +21,9 @@ const url = "https://mnpcourier.com/cplight/qsr";
         "--disable-software-rasterizer",
         "--remote-debugging-port=9222",
       ],
-      
+
       executablePath: process.env.PUPPETEER_EXECUTABLE_PATH || undefined,
+      timeout: 100000
     });
     const page = await browser.newPage();
     await page.setUserAgent(
@@ -32,6 +32,8 @@ const url = "https://mnpcourier.com/cplight/qsr";
 
     // Open the login page
     await page.goto("https://mnpcourier.com/cplight/login");
+
+    console.log("Login page");
 
     // Fill in the login credentials
     await page.type(
@@ -71,29 +73,29 @@ const url = "https://mnpcourier.com/cplight/qsr";
         });
       }, 1000);
     }
-
-    await customersData(page);
-
-    page.on("dialog", async (dialog) => {
-      console.log(`Dialog detected: ${dialog.message()}`); // Log the dialog message
-      await dialog.dismiss(); // Dismiss the dialog
-    });
-
-    // Extract customer IDs
-    await getAllCustomersCN();
-    let customerIds = await getAllCustomersCN();
-
-    await scrapeCustomerTracking(customerIds);
-    await addRefToCustomers();
-    await Customer.deleteOldCustomers();
-
-    setInterval(async () => {
+    setTimeout(async () => {
       await customersData(page);
-      await Customer.monitorTrackingData();
-      await Customer.deleteOldCustomers();
-      await addRefToCustomers();
-    }, 7 * 60 * 60 * 1000); // Run every 7 hours
 
+      page.on("dialog", async (dialog) => {
+        console.log(`Dialog detected: ${dialog.message()}`); // Log the dialog message
+        await dialog.dismiss(); // Dismiss the dialog
+      });
+
+      // Extract customer IDs
+      await getAllCustomersCN();
+      let customerIds = await getAllCustomersCN();
+
+      await scrapeCustomerTracking(customerIds);
+      await addRefToCustomers();
+      await Customer.deleteOldCustomers();
+
+      setInterval(async () => {
+        await customersData(page);
+        await Customer.monitorTrackingData();
+        await Customer.deleteOldCustomers();
+        await addRefToCustomers();
+      }, 7 * 60 * 60 * 1000); // Run every 7 hours
+    }, 10000);
     // Keep the browser open if you need to interact manually or close it after a certain time
     // await browser.close();
   } catch (e) {

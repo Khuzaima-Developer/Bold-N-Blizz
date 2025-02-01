@@ -1,13 +1,6 @@
 const mongoose = require("mongoose");
 const Schema = mongoose.Schema;
-const scrapeCustomerTracking = require("../public/js/orders/customerTracking/extract-customer-tracking.js");
-const CustomerTracking = require("../models/customer-tracking.js");
-const moment = require("moment");
-const axios = require("axios");
-const https = require("https");
-const agent = new https.Agent({
-  rejectUnauthorized: false, // Disable SSL certificate validation
-});
+const fetchWithRetry = require("../public/js/orders/customerTracking/fetch-retries-url.js");
 
 // Define customer schema
 
@@ -217,42 +210,18 @@ customerSchema.statics.deleteOldCustomers = async function () {
         console.log(`Deleted old customer with CN: ${customer.CN}`);
       }
     }
+    console.log("Old customer deleted successfully");
   } catch (err) {
     console.error("Error deleting old customers:", err);
     throw err;
   }
 }; // Correct method name
 
-const fetchWithRetry = async (url, retries = 3, delay = 3000) => {
-  for (let attempt = 0; attempt < retries; attempt++) {
-    try {
-      const response = await axios.get(url, {
-        httpsAgent: agent,
-        timeout: 60000, // Set a long timeout of 1 minute per request
-      });
-      return response.data; // Return data if successful
-    } catch (error) {
-      if (attempt < retries - 1) {
-        console.log(
-          `Attempt ${attempt + 1} failed. Retrying in ${
-            delay / 1000
-          } seconds...`
-        );
-        await new Promise((resolve) => setTimeout(resolve, delay)); // Wait before retrying
-      } else {
-        console.error(
-          `Failed to fetch data from ${url} after ${retries} attempts: ${error.message}`
-        );
-        throw error; // Throw error after all retries fail
-      }
-    }
-  }
-};
-
 customerSchema.statics.monitorTrackingData = async function (
   batchSize = 2,
   delay = 5000
 ) {
+  const trackingDataUrl = `https://www.mulphilog.com/tracking/${CN}`;
   try {
     // Fetch all distinct tracking IDs
     const CNs = await this.distinct("CN");
@@ -269,7 +238,6 @@ customerSchema.statics.monitorTrackingData = async function (
       for (const CN of batch) {
         try {
           // Fetch tracking data from the external API with retries
-          const trackingDataUrl = `https://www.mulphilog.com/tracking/${CN}`;
           const newTrackingData = await fetchWithRetry(trackingDataUrl);
 
           // Fetch existing tracking data from the database
@@ -304,6 +272,7 @@ customerSchema.statics.monitorTrackingData = async function (
           }
         } catch (err) {
           console.error(`Error processing tracking ID ${CN}: ${err.message}`);
+          await fetchWithRetry(trackingDataUrl); // Retry fetching the data after a delay
         }
       }
 
@@ -316,6 +285,7 @@ customerSchema.statics.monitorTrackingData = async function (
     console.log("monitorTrackingData process completed.");
   } catch (err) {
     console.error("Error in monitorTrackingData:", err.message);
+    await fetchWithRetry(trackingDataUrl);
   }
 };
 

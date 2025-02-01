@@ -22,11 +22,13 @@ async function customersData(page) {
         "#app > div > div.main-content > section > div.card > div.row.mt-3.pb-2 > div > div.justify-content-center > ul > li:nth-child(4) > a";
       const isTable = "table tbody";
 
+      const findTable = await page.$("table tbody");
+
       // Wait for the table to be available before scraping
       await page.waitForSelector(
         isTable,
         { visible: true },
-        { setTimeout: 10000, timeout: 100000 }
+        { timeout: 60 * 1000 }
       );
 
       console.log("func is executing");

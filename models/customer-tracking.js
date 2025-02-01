@@ -1,10 +1,5 @@
 const mongoose = require("mongoose");
 const Schema = mongoose.Schema;
-const axios = require("axios");
-const https = require("https");
-const agent = new https.Agent({
-  rejectUnauthorized: false, // Disable SSL certificate validation
-});
 
 let customerTrackingSchema = new Schema({
   trackingId: {

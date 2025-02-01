@@ -31,6 +31,7 @@ async function addRefToCustomers() {
         }
       }
     }
+    console.log("Add ref to customers");
   } catch (error) {
     console.error("Error adding references to customers:", error.message);
   }

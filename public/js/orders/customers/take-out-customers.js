@@ -40,7 +40,7 @@ async function handleDialog(page) {
 
       if (!dialog.handled) {
         await dialog.dismiss();
-        console.log("Dialog dismissed.");
+        console.log("Dialog dismissed.", dialog.message());
       } else {
         console.log("Dialog was already handled.");
       }
@@ -80,6 +80,12 @@ async function fillDateInput(page) {
       );
 
       await page.type(dateSelector, date31DaysEarlier);
+      const dateValue = await page.evaluate((selector) => {
+        const element = document.querySelector(selector);
+        return element ? element.value : 'Element not found';
+      }, dateSelector); // Replace with the actual selector
+
+      console.log("Date input filled:", dateValue);
 
       setTimeout(async () => {
         await page.click(

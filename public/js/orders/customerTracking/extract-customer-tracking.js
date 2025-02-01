@@ -1,6 +1,7 @@
 const cheerio = require("cheerio");
 const puppeteer = require("puppeteer"); // Ensure puppeteer-core is properly configured
 const CustomerTracking = require("../../../../models/customer-tracking.js");
+const fetchWithRetry = require("../customerTracking/fetch-retries-url.js");
 
 /**
  * Extract data using Cheerio from the page's HTML content.
@@ -66,8 +67,8 @@ async function scrapeCustomerTracking(customerIds) {
     ],
   });
 
-  const MAX_PARALLEL_PAGES = 5; // Reduce the parallel pages for lower CPU usage
-  const DELAY_BETWEEN_BATCHES = 5000; // Add a longer delay between batches
+  const MAX_PARALLEL_PAGES = 5; // Reduce CPU usage
+  const DELAY_BETWEEN_BATCHES = 5000; // Delay between batches
 
   const processBatch = async (batch) => {
     const promises = batch.map(async (customerId) => {
@@ -86,34 +87,67 @@ async function scrapeCustomerTracking(customerIds) {
           }
         });
 
-        // Load the tracking page with a reasonable timeout
-        await page.goto(`https://www.mulphilog.com/tracking/${customerId}`, {
-          waitUntil: "domcontentloaded",
-          // timeout: 60000, // Shorter timeout to prevent stuck tasks
-        });
+        const customerUrl = `https://www.mulphilog.com/tracking/${customerId}`;
+
+        // Validate URL before navigating
+        const validUrl = await fetchWithRetry(customerUrl);
+        if (!validUrl) {
+          console.error(
+            `Skipping Customer ID ${customerId} due to invalid URL.`
+          );
+          return;
+        }
+
+        // **NEW: Retry logic for Puppeteer navigation**
+        const maxPageRetries = 3;
+        for (let attempt = 0; attempt < maxPageRetries; attempt++) {
+          try {
+            await page.goto(validUrl, {
+              waitUntil: "domcontentloaded",
+              timeout: 300000, // 300 seconds timeout
+            });
+            break; // Success! Break out of retry loop
+          } catch (error) {
+            console.error(
+              `Attempt ${attempt + 1} failed for ${customerId}: ${
+                error.message
+              }`
+            );
+            if (attempt < maxPageRetries - 1) {
+              console.log(
+                `Retrying page load for ${customerId} in 5 seconds...`
+              );
+              await new Promise((resolve) => setTimeout(resolve, 5000));
+            } else {
+              console.error(
+                `Failed to load page for ${customerId} after ${maxPageRetries} attempts.`
+              );
+              return; // Skip this customer
+            }
+          }
+        }
 
         // Process the customer tracking data
         await customerTrackingData(page, customerId);
+        console.log(`Processed customer ${customerId}`);
       } catch (error) {
         console.error(
-          `Error processing Customer ID ${customerId}:`,
-          error.message
+          `Error processing Customer ID ${customerId}: ${error.message}`
         );
+        await fetchWithRetry(customerUrl);
       } finally {
         if (page) {
           try {
             await page.close();
           } catch (err) {
             console.warn(
-              `Failed to close page for Customer ID ${customerId}:`,
-              err.message
+              `Failed to close page for Customer ID ${customerId}: ${err.message}`
             );
           }
         }
       }
     });
 
-    // Use Promise.allSettled to ensure all tasks complete, even if some fail
     await Promise.allSettled(promises);
   };
 
@@ -122,17 +156,12 @@ async function scrapeCustomerTracking(customerIds) {
     for (let i = 0; i < customerIds.length; i += MAX_PARALLEL_PAGES) {
       const batch = customerIds.slice(i, i + MAX_PARALLEL_PAGES);
       await processBatch(batch);
-
-      // Add delay to reduce CPU load further
       await new Promise((resolve) =>
         setTimeout(resolve, DELAY_BETWEEN_BATCHES)
       );
     }
   } catch (error) {
-    console.error(
-      "There is an error while processing the customer data:",
-      error.message
-    );
+    console.error("Error while processing the customer data:", error.message);
   } finally {
     try {
       await browser.close();
