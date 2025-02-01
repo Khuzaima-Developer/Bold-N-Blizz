@@ -131,6 +131,5 @@ module.exports = {
   extractDataWithCheerio,
   pageData,
   getAllCustomersCN,
-  continuouslyCheckAndUpdateData,
   addRefToCustomers,
 };

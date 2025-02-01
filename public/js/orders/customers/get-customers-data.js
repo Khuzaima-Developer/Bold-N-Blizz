@@ -1,7 +1,6 @@
 const {
   extractDataWithCheerio,
   pageData,
-  continuouslyCheckAndUpdateData,
 } = require("./customers-extracting.js");
 const { verifyDateInput, fillDateInput } = require("./take-out-customers.js");
 
