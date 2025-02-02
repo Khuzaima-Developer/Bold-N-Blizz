@@ -35,8 +35,7 @@ async function handleDialog(page) {
   // Listen for dialog events
   page.on("dialog", async (dialog) => {
     try {
-      dialogDetected = true; // Set flag to true when a dialog is detected
-      console.log("Dialog detected:", dialog.message());
+      dialogDetected = true;
 
       if (!dialog.handled) {
         await dialog.dismiss();
@@ -78,10 +77,10 @@ async function fillDateInput(page) {
 
         const dateValue = await page.evaluate((selector) => {
           const element = document.querySelector(selector);
-          console.log(element.value)
+          console.log("element value",element.value)
           return element ? element.value : "Element not found";
         }, dateSelector); // Replace with the actual selector
-        console.log(dateValue)
+        console.log(dateValue, date31DaysEarlier);
 
         setTimeout(async () => {
           await page.click(
