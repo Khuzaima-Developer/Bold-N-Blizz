@@ -21,7 +21,7 @@ function getDate31DaysEarlier() {
   return `${day}-${month}-${year}`;
 }
 
-function date31DaysEarlier() {
+function endDate() {
   const currentDate = new Date();
   currentDate.setDate(currentDate.getDate() - 31);
   const year = currentDate.getFullYear();
@@ -139,5 +139,5 @@ module.exports = {
   fillDateInput,
   verifyDateInput,
   todayDate,
-  date31DaysEarlier,
+  endDate,
 };
