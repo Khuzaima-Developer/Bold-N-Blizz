@@ -1,4 +1,5 @@
 // Require dependencies
+const puppeteer = require("puppeteer");
 const ExpressError = require("../utils/error-handler/ExpressError.js");
 const Customer = require("../models/customers.js");
 const CustomerTracking = require("../models/customer-tracking.js");
@@ -7,6 +8,7 @@ const {
   getDate31DaysEarlier,
   todayDate,
 } = require("../public/js/orders/customers/take-out-customers.js");
+const { loginPortal } = require("../public/js/orders/login-portal.js");
 
 const startDate = getDate31DaysEarlier();
 const endDate = todayDate();

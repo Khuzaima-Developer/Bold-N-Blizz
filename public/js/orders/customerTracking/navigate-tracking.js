@@ -3,7 +3,7 @@ document.addEventListener("DOMContentLoaded", function () {
   columnTwo.forEach((item) => {
     item.addEventListener("click", function () {
       const consignmentNumber = item.textContent.trim(); // Extract consignment number from the element's text
-      const trackingUrl = `https://www.mulphilog.com/tracking/${consignmentNumber}`;
+      const trackingUrl = `https://mnpcourier.com/cplight/tracking`;
       window.open(trackingUrl, "_blank"); // Open the URL in a new tab
     });
   });

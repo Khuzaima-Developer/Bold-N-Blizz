@@ -171,7 +171,7 @@
   word-wrap: break-word;
   background-color: white;
   background-clip: border-box;
-  border: 1px solid rgba(0, 0, 0, 0.125);
+  border: 1px solid rgba(0, 0, 0, 0.2);
   border-radius: 0.25rem;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.03);
   background-color: white;
@@ -255,7 +255,7 @@ table tr {
 }
 .table.table-bordered td,
 .table.table-bordered th {
-  border-color: #f6f6f6;
+  border-color: #f8fafb;
 }
 .table.table-bordered > :not(caption) > * {
   border-width: 1px;
@@ -272,7 +272,7 @@ table tr {
 
 .th-datatable {
   white-space: nowrap;
-  background-color: #f5f5f5 !important;
+  background-color: #f4f6f9 !important;
   border: none;
   color: inherit !important;
   transition: 0.3s;
@@ -297,11 +297,11 @@ tbody tr td:nth-child(5) {
   cursor: pointer;
 }
 .click-th:hover {
-  background-color: rgba(0, 0, 0, 0.1019607843) !important;
+  background-color: rgba(0, 0, 0, 0.1) !important;
 }
 
 .bg-color {
-  background-color: rgba(0, 0, 0, 0.1019607843) !important;
+  background-color: rgba(0, 0, 0, 0.1) !important;
 }
 
 .click-arrow {

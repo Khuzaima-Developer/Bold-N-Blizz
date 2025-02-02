@@ -83,9 +83,9 @@
         }
 
         &.active a {
-          background: #e25a0c;
-          color: white;
-          box-shadow: -2px 2px 5px 4px #a69b9b69;
+          background: $color-primary;
+          color: $color-white;
+          box-shadow: -2px 2px 5px 4px $color-grey-1;
 
           @include respond(smLaptop) {
             color: $color-primary;

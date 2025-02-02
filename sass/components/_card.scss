@@ -6,7 +6,7 @@
   word-wrap: break-word;
   background-color: $color-white;
   background-clip: border-box;
-  border: 1px solid rgba(0, 0, 0, 0.125);
+  border: 1px solid rgba($color-black, 0.2);
   border-radius: 0.25rem;
   box-shadow: $card-shadow;
   background-color: $color-white;
@@ -26,12 +26,12 @@
       font-weight: 600;
       font-size: 20px;
       margin-right: 10px;
-      color: #de621ade;
+      color: $color-primary-dark;
     }
     .label-text {
       font-size: 19px;
       font-style: italic;
-      color: #655555;
+      color: $color-grey-2;
     }
   }
   .date {

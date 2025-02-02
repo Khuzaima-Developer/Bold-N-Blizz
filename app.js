@@ -17,7 +17,7 @@ const Customer = require("./models/customers.js");
 
 // require pages
 const ExpressError = require("./utils/error-handler/ExpressError");
-const customerData = require("./public/js/orders/scraper.js");
+const { scrapeAllData } = require("./public/js/orders/scraper.js");
 
 // port
 let port = process.env.PORT;
@@ -93,6 +93,8 @@ app.use((req, res, next) => {
   res.locals.error = req.flash("error");
   next();
 });
+
+scrapeAllData()
 
 // routes
 app.use("/orders", ordersPath);

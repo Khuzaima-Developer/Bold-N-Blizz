@@ -22,13 +22,19 @@ async function addRefToCustomers() {
 
       // Add trackingId to each Customer document if matching CustomerTracking exists
       for (const tracking of existingTrackings) {
-        if (tracking.trackingId === customer.CN) {
-          // Add refId (trackingId) from CustomerTracking to Customer document
-          customer.trackingId = tracking._id;
+        // Find the customer where trackingId is missing and CN matches trackingId
+        const noTracking = await Customer.findOne({
+          trackingId: { $exists: false },
+          CN: tracking.trackingId,
+        });
 
-          // Save the updated Customer document
+        if (noTracking) {
+          // Add trackingId to customer
+          customer.trackingId = tracking._id;
           await customer.save();
-          console.log(`tracking id added to ${customer.trackingId}`);
+          console.log(
+            `Tracking ID ${tracking._id} added to Customer ${customer.CN}`
+          );
         }
       }
     }

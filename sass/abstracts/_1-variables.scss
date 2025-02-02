@@ -1,10 +1,24 @@
 // color variables
 
 $color-primary: #e25a0c;
+$color-primary-dark: #de621ade;
+
 $color-secondary: #f4f6f9;
 $color-secondary-light: #f8fafb;
+
 $color-grey-light: #f2f2f2;
-$color-text: #6c757d;
 $color-white: white;
 
-$card-shadow: 0 4px 8px rgba(0, 0, 0, 0.03);
+//grey
+$color-grey-1: #a69b9b69;
+$color-grey-2: #655555;
+
+//color black
+$color-black: #000000;
+
+// typography
+$color-text: #6c757d;
+$color-text-1: #78828a;
+$color-head: #34395e;
+
+$card-shadow: 0 4px 8px rgba($color-black, 0.03);
