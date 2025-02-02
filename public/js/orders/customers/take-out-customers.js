@@ -75,20 +75,20 @@ async function fillDateInput(page) {
 
       setTimeout(async () => {
         await page.type(dateSelector, date31DaysEarlier);
-      }, 2 * 1000)
-      
-      const dateValue = await page.evaluate((selector) => {
-        const element = document.querySelector(selector);
-        return element ? element.value : 'Element not found';
-      }, dateSelector); // Replace with the actual selector
 
-      setTimeout(async () => {
-        await page.click(
-          "#app > div > div.main-content > section > div.card > div > div:nth-child(8) > button"
-        );
-        resolve();
-      }, 1000);
-      console.log("fillDateInput")
+        const dateValue = await page.evaluate((selector) => {
+          const element = document.querySelector(selector);
+          return element ? element.value : "Element not found";
+        }, dateSelector); // Replace with the actual selector
+
+        setTimeout(async () => {
+          await page.click(
+            "#app > div > div.main-content > section > div.card > div > div:nth-child(8) > button"
+          );
+          resolve();
+        }, 1000);
+        console.log("fillDateInput");
+      }, 2 * 1000);
     } catch (error) {
       console.error("Error in fillDateInput:", error);
       reject(error);
@@ -120,7 +120,7 @@ async function verifyDateInput(page) {
     await page.goto(targetURL, { waitUntil: "load" });
     await fillDateInput(page);
   }
-  console.log("verifyDateInput")
+  console.log("verifyDateInput");
   await handleDialog(page);
 }
 
