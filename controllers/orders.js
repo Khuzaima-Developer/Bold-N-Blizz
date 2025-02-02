@@ -5,12 +5,12 @@ const Customer = require("../models/customers.js");
 const CustomerTracking = require("../models/customer-tracking.js");
 const moment = require("moment");
 const {
-  getDate31DaysEarlier,
+  date31DaysEarlier,
   todayDate,
 } = require("../public/js/orders/customers/take-out-customers.js");
 const { loginPortal } = require("../public/js/orders/login-portal.js");
 
-const startDate = getDate31DaysEarlier();
+const startDate = date31DaysEarlier();
 const endDate = todayDate();
 
 module.exports.deliveredOrders = async (req, res, next) => {

@@ -18,6 +18,15 @@ function getDate31DaysEarlier() {
   const year = currentDate.getFullYear();
   const month = String(currentDate.getMonth() + 1).padStart(2, "0"); // Months are zero-based
   const day = String(currentDate.getDate()).padStart(2, "0");
+  return `${day}-${month}-${year}`;
+}
+
+function date31DaysEarlier() {
+  const currentDate = new Date();
+  currentDate.setDate(currentDate.getDate() - 31);
+  const year = currentDate.getFullYear();
+  const month = String(currentDate.getMonth() + 1).padStart(2, "0"); // Months are zero-based
+  const day = String(currentDate.getDate()).padStart(2, "0");
   return `${day}/${month}/${year}`;
 }
 
@@ -130,4 +139,5 @@ module.exports = {
   fillDateInput,
   verifyDateInput,
   todayDate,
+  date31DaysEarlier,
 };
