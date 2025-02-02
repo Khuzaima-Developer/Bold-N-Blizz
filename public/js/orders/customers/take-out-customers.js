@@ -78,8 +78,10 @@ async function fillDateInput(page) {
 
         const dateValue = await page.evaluate((selector) => {
           const element = document.querySelector(selector);
+          console.log(element.value)
           return element ? element.value : "Element not found";
         }, dateSelector); // Replace with the actual selector
+        console.log(dateValue)
 
         setTimeout(async () => {
           await page.click(
