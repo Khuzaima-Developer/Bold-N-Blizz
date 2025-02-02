@@ -73,7 +73,10 @@ async function fillDateInput(page) {
         date31DaysEarlier
       );
 
-      await page.type(dateSelector, date31DaysEarlier);
+      setTimeout(async () => {
+        await page.type(dateSelector, date31DaysEarlier);
+      }, 2 * 1000)
+      
       const dateValue = await page.evaluate((selector) => {
         const element = document.querySelector(selector);
         return element ? element.value : 'Element not found';
