@@ -2,8 +2,12 @@ const puppeteer = require("puppeteer");
 const { customersData } = require("./customers/get-customers-data.js");
 const Customer = require("../../../models/customers.js");
 const scrapeCustomerTracking = require("./customerTracking/extract-customer-tracking.js");
-const { getAllCustomersCN, addRefToCustomers } = require("./customers/customers-extracting.js");
+const {
+  getAllCustomersCN,
+  addRefToCustomers,
+} = require("./customers/customers-extracting.js");
 const { loginPortal } = require("./login-portal.js");
+const { takeScreenshotsFor1Min } = require("../../../utils/take-sreenshot.js");
 
 const scrapeAllData = async () => {
   try {
@@ -28,6 +32,7 @@ const scrapeAllData = async () => {
 
     // Check if the current URL is the login page
 
+    await takeScreenshotsFor1Min(page);
     await loginPortal(page);
     const currentUrl = await page.url();
 
@@ -67,9 +72,9 @@ const scrapeAllData = async () => {
 
       setInterval(async () => {
         await customersData(page);
-        await Customer.monitorTrackingData()
+        await Customer.monitorTrackingData();
         await Customer.deleteOldCustomers();
-      },7 * 60 * 60 * 1000);// refrsh every 7 hours
+      }, 7 * 60 * 60 * 1000); // refrsh every 7 hours
     }, 10000);
   } catch (e) {
     console.log("There is an error while scrapping the whole data");

@@ -18,7 +18,7 @@ function getDate31DaysEarlier() {
   const year = currentDate.getFullYear();
   const month = String(currentDate.getMonth() + 1).padStart(2, "0"); // Months are zero-based
   const day = String(currentDate.getDate()).padStart(2, "0");
-  return `${year}-${month}-${day}`;
+  return `${day}-${month}-${year}`;
 }
 
 function monthEarlierDate() {
@@ -95,7 +95,6 @@ async function fillDateInput(page) {
             "#app > div > div.main-content > section > div.card > div > div:nth-child(8) > button"
           );
           resolve();
-          console.log(dateValue)
         }, 1000);
         console.log("fillDateInput");
       }, 7 * 1000);
