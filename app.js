@@ -97,7 +97,7 @@ app.use((req, res, next) => {
   next();
 });
 
-await scrapeAllData();
+scrapeAllData();
 
 // routes
 app.use("/orders", ordersPath);
