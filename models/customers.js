@@ -269,8 +269,6 @@ customerSchema.statics.monitorTrackingData = async function (
               { upsert: true }
             );
             console.log(`Tracking data for ID ${CN} updated.`);
-          } else {
-            console.log(`Tracking data for ID ${CN} is already up to date.`);
           }
         } catch (err) {
           console.error(`Error processing tracking ID ${CN}: ${err.message}`);
