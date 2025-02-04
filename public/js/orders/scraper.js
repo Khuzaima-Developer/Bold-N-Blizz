@@ -32,14 +32,12 @@ const scrapeAllData = async () => {
 
     // Check if the current URL is the login page
 
-    await takeScreenshotsFor1Min(page);
     await loginPortal(page);
+    // await takeScreenshotsFor1Min(page);
     const currentUrl = await page.url();
 
     if (currentUrl === "https://mnpcourier.com/cplight/login") {
-      console.log("Login failed or still on login page");
-      await browser.close();
-      return;
+      await loginPortal(page);
     }
 
     //   The url to qsr
@@ -56,26 +54,11 @@ const scrapeAllData = async () => {
     setTimeout(async () => {
       await customersData(page);
 
-      function resetInactivityTimer() {
-        setTimeout(async () => {
-          await browser.close();
-          console.log("✅ Browser closed due to inactivity.");
-        }, 60000); // 60 seconds (1 minute)
-      }
-      resetInactivityTimer();
-
       // Extract customer IDs
-      await getAllCustomersCN();
-      let customerIds = await getAllCustomersCN();
-      await scrapeCustomerTracking(customerIds);
       await Customer.deleteOldCustomers();
-
-      setInterval(async () => {
-        await customersData(page);
-        await Customer.monitorTrackingData();
-        await Customer.deleteOldCustomers();
-      }, 7 * 60 * 60 * 1000); // refrsh every 7 hours
-    }, 10000);
+      await Customer.monitorTrackingData();
+      addRefToCustomers();
+    }, 1000);
   } catch (e) {
     console.log("There is an error while scrapping the whole data");
     console.error(e);

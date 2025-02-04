@@ -221,7 +221,7 @@ customerSchema.statics.monitorTrackingData = async function (
   batchSize = 2,
   delay = 5000
 ) {
-  const trackingDataUrl = `https://www.mulphilog.com/tracking/${CN}`;
+  const trackingDataUrl = `https://www.mulphilog.com/tracking/${Customer.CN}`;
   try {
     // Fetch all distinct tracking IDs
     const CNs = await this.distinct("CN");
@@ -269,6 +269,8 @@ customerSchema.statics.monitorTrackingData = async function (
               { upsert: true }
             );
             console.log(`Tracking data for ID ${CN} updated.`);
+          } else {
+            console.log(`Tracking data for ID ${CN} is already up to date.`);
           }
         } catch (err) {
           console.error(`Error processing tracking ID ${CN}: ${err.message}`);
@@ -281,7 +283,6 @@ customerSchema.statics.monitorTrackingData = async function (
         await new Promise((resolve) => setTimeout(resolve, delay)); // Wait before processing the next batch
       }
     }
-
     console.log("monitorTrackingData process completed.");
   } catch (err) {
     console.error("Error in monitorTrackingData:", err.message);

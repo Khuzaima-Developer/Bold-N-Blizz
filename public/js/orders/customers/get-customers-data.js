@@ -2,7 +2,7 @@ const {
   extractDataWithCheerio,
   pageData,
 } = require("./customers-extracting.js");
-const { verifyDateInput, fillDateInput } = require("./take-out-customers.js");
+const { fillDateInput } = require("./take-out-customers.js");
 
 /**
  * Scrapes data from two pages (if navigation is required) and logs them.
@@ -11,8 +11,6 @@ const { verifyDateInput, fillDateInput } = require("./take-out-customers.js");
 
 async function customersData(page) {
   await fillDateInput(page);
-
-  await verifyDateInput(page); // Your function will be called after 1 second
 
   async function scrapeCustomers(page) {
     try {
@@ -25,7 +23,6 @@ async function customersData(page) {
       if (!findTable) {
         console.log("⚠️ Table not found! Retrying...");
         await fillDateInput(page); // Refill the date input
-        await verifyDateInput(page);
         return await scrapeCustomers(page); // Retry scraping
       }
 

@@ -94,7 +94,12 @@ app.use((req, res, next) => {
   next();
 });
 
-scrapeAllData()
+async function executeFuncEveryHour() {
+  await scrapeAllData();
+  setTimeout(executeFuncEveryHour, 60 * 60 * 1000); // 1 hour delay before next execution
+}
+
+executeFuncEveryHour(); // Start the process
 
 // routes
 app.use("/orders", ordersPath);
