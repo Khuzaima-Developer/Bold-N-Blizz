@@ -3,7 +3,7 @@ const Schema = mongoose.Schema;
 const fetchWithRetry = require("../public/js/orders/customerTracking/fetch-retries-url.js");
 const puppeteer = require("puppeteer");
 const {
-  customerTrackingData
+  customerTrackingData,
 } = require("../public/js/orders/customerTracking/extract-customer-tracking.js");
 
 // Define customer schema
@@ -225,7 +225,17 @@ customerSchema.statics.monitorTrackingData = async function (
   batchSize = 2,
   delay = 5000
 ) {
-  const browser = await puppeteer.launch({ headless: true }); // Launch the browser
+  const browser = await puppeteer.launch({
+    headless: true,
+    args: [
+      "--no-sandbox",
+      "--disable-setuid-sandbox",
+      "--disable-gpu",
+      "--disable-dev-shm-usage",
+      "--disable-software-rasterizer",
+      "--remote-debugging-port=9222",
+    ],
+  }); // Launch the browser
   let page = await browser.newPage(); // Open a new page
 
   try {
