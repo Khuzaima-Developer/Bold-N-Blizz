@@ -28,7 +28,9 @@ const ordersPath = require("./routes/orders.js");
 
 async function main() {
   await mongoose.connect(atlasDbUrl, {
-    tlsAllowInvalidCertificates: true, // Add this option
+    tlsAllowInvalidCertificates: true,
+    serverSelectionTimeoutMS: 30000, // Increase timeout to 30 seconds
+    socketTimeoutMS: 45000,
   });
 }
 
@@ -65,6 +67,7 @@ let sessionOptions = {
     httpOnly: true,
   },
 };
+console.log(new Date());
 
 // use methods
 app.use(express.static(path.join(__dirname, "/public")));
@@ -94,12 +97,7 @@ app.use((req, res, next) => {
   next();
 });
 
-async function executeFuncEveryHour() {
-  await scrapeAllData();
-  setTimeout(executeFuncEveryHour, 60 * 60 * 1000); // 1 hour delay before next execution
-}
-
-executeFuncEveryHour(); // Start the process
+await scrapeAllData();
 
 // routes
 app.use("/orders", ordersPath);

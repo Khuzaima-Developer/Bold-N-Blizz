@@ -23,7 +23,7 @@ const scrapeAllData = async () => {
       ],
 
       executablePath: process.env.PUPPETEER_EXECUTABLE_PATH || undefined,
-      timeout: 100000,
+      timeout: 3 * 60 * 60 * 1000,
     });
     const page = await browser.newPage();
     await page.setUserAgent(

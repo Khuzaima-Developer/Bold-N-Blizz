@@ -1,6 +1,10 @@
 const mongoose = require("mongoose");
 const Schema = mongoose.Schema;
 const fetchWithRetry = require("../public/js/orders/customerTracking/fetch-retries-url.js");
+const puppeteer = require("puppeteer");
+const {
+  customerTrackingData
+} = require("../public/js/orders/customerTracking/extract-customer-tracking.js");
 
 // Define customer schema
 
@@ -221,10 +225,12 @@ customerSchema.statics.monitorTrackingData = async function (
   batchSize = 2,
   delay = 5000
 ) {
-  const trackingDataUrl = `https://www.mulphilog.com/tracking/${Customer.CN}`;
+  const browser = await puppeteer.launch({ headless: true }); // Launch the browser
+  let page = await browser.newPage(); // Open a new page
+
   try {
-    // Fetch all distinct tracking IDs
-    const CNs = await this.distinct("CN");
+    // Fetch all distinct tracking IDs using aggregation
+    const CNs = await this.aggregate([{ $group: { _id: "$CN" } }]);
 
     if (!CNs.length) {
       console.log("No tracking IDs found.");
@@ -235,44 +241,20 @@ customerSchema.statics.monitorTrackingData = async function (
     for (let i = 0; i < CNs.length; i += batchSize) {
       const batch = CNs.slice(i, i + batchSize);
 
-      for (const CN of batch) {
+      for (const CNObj of batch) {
+        const CN = CNObj._id; // Extract the CN value from the group
+
         try {
-          // Fetch tracking data from the external API with retries
-          const newTrackingData = await fetchWithRetry(trackingDataUrl);
+          const trackingDataUrl = `https://www.mulphilog.com/tracking/${CN}`;
 
-          // Fetch existing tracking data from the database
-          const existingTrackingData = await this.findOne({
-            CN,
-          }).lean();
-
-          // Check if the data has changed
-          const hasChanged =
-            !existingTrackingData ||
-            existingTrackingData.Date !== newTrackingData.Date ||
-            existingTrackingData.Details !== newTrackingData.Details ||
-            existingTrackingData.Location !== newTrackingData.Location ||
-            existingTrackingData.Status !== newTrackingData.Status;
-
-          if (hasChanged) {
-            // Update the data if changes are detected
-            await this.updateOne(
-              { CN },
-              {
-                $set: {
-                  Date: newTrackingData.Date,
-                  Details: newTrackingData.Details,
-                  Location: newTrackingData.Location, // Provide a default location if not defined
-                  Status: newTrackingData.Status,
-                  updatedAt: Date.now(),
-                },
-              },
-              { upsert: true }
-            );
-            console.log(`Tracking data for ID ${CN} updated.`);
-          }
+          // Navigate to the tracking page and wait until the page is fully loaded
+          await page.goto(trackingDataUrl, {
+            waitUntil: "domcontentloaded",
+            timeout: 60000, // Timeout after 1 minute if the page doesn't load
+          });
+          await customerTrackingData(page, CN);
         } catch (err) {
           console.error(`Error processing tracking ID ${CN}: ${err.message}`);
-          await fetchWithRetry(trackingDataUrl); // Retry fetching the data after a delay
         }
       }
 
@@ -281,10 +263,13 @@ customerSchema.statics.monitorTrackingData = async function (
         await new Promise((resolve) => setTimeout(resolve, delay)); // Wait before processing the next batch
       }
     }
+
     console.log("monitorTrackingData process completed.");
   } catch (err) {
     console.error("Error in monitorTrackingData:", err.message);
-    await fetchWithRetry(trackingDataUrl);
+  } finally {
+    // Close the browser after the process is completed
+    await browser.close();
   }
 };
 

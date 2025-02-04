@@ -28,13 +28,17 @@ async function deleteFilesInBatches(batchSize = 90) {
 
       while (resources.length > 0) {
         // Take the first 90 files from the list
-        const batch = resources.splice(0, batchSize).map((file) => file.public_id);
+        const batch = resources
+          .splice(0, batchSize)
+          .map((file) => file.public_id);
 
         // Delete batch of 90 files
         await cloudinary.api.delete_resources(batch);
         deletedFilesCount += batch.length;
 
-        console.log(`🗑 Deleted ${batch.length} files. Total Deleted: ${deletedFilesCount}`);
+        console.log(
+          `🗑 Deleted ${batch.length} files. Total Deleted: ${deletedFilesCount}`
+        );
       }
 
       // Continue fetching files if there's more
@@ -48,6 +52,6 @@ async function deleteFilesInBatches(batchSize = 90) {
 }
 
 // Run the deletion function
-deleteFilesInBatches();
+// deleteFilesInBatches();
 
 module.exports = deleteFilesInBatches;

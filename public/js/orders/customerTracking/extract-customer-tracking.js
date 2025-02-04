@@ -37,8 +37,26 @@ async function customerTrackingData(page, customerId) {
     };
 
     try {
+      // Fetch the existing tracking data from the database
+      const existingTrackingData = await CustomerTracking.findOne({
+        trackingId: customerId,
+      });
+
       // Call the static method to update or insert the tracking data
-      await CustomerTracking.updateTrackings(tracking);
+      const hasChanged =
+        !existingTrackingData ||
+        existingTrackingData.date !== tracking.date ||
+        existingTrackingData.details !== tracking.details ||
+        existingTrackingData.location !== tracking.location ||
+        existingTrackingData.status !== tracking.status;
+
+      if (hasChanged) {
+        // Update or insert the new tracking data if changes are detected
+        await CustomerTracking.updateTrackings(tracking);
+        console.log(`Tracking data for Customer ID ${customerId} updated.`);
+      }else {
+        console.log(`No changes detected for Customer ID ${customerId}.`);
+      }
     } catch (error) {
       console.error(
         `Error saving tracking data for Customer ID ${customerId}:`,
@@ -173,4 +191,4 @@ async function scrapeCustomerTracking(customerIds) {
 
 // Example: Mock `customerTrackingData` function
 
-module.exports = scrapeCustomerTracking;
+module.exports = { scrapeCustomerTracking, customerTrackingData };
