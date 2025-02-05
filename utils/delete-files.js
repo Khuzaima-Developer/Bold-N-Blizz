@@ -55,3 +55,31 @@ async function deleteFilesInBatches(batchSize = 90) {
 // deleteFilesInBatches();
 
 module.exports = deleteFilesInBatches;
+
+const fs = require("fs");
+const path =
+  "C:\\Users\\khuza\\AppData\\Local\\Temp\\puppeteer_dev_chrome_profile-rXbZwJ\\first_party_sets.db-journal";
+
+function deleteFileWithRetry(filePath, retries = 3) {
+  return new Promise((resolve, reject) => {
+    const attemptDeletion = (remainingRetries) => {
+      fs.unlink(filePath, (err) => {
+        if (err && remainingRetries > 0) {
+          console.log("Error deleting file, retrying...");
+          setTimeout(() => attemptDeletion(remainingRetries - 1), 1000);
+        } else if (err) {
+          reject(`Failed to delete file after retries: ${err.message}`);
+        } else {
+          resolve();
+        }
+      });
+    };
+
+    attemptDeletion(retries);
+  });
+}
+
+// Call this function where you need to delete files
+deleteFileWithRetry(path)
+  .then(() => console.log("File deleted successfully"))
+  .catch((err) => console.error(err));

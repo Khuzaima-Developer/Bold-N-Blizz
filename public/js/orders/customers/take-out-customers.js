@@ -64,12 +64,6 @@ async function verifyDateInput(page) {
 
   let [year, month, day] = currentDateValue.split("-");
   currentDateValue = `${day}-${month}-${year}`;
-  console.log(
-    "Current date value:",
-    currentDateValue,
-    "date31:",
-    date31DaysEarlier
-  );
 
   await page.waitForSelector(dateSelector, { visible: true });
 
@@ -78,7 +72,6 @@ async function verifyDateInput(page) {
     await page.goto(targetURL, { waitUntil: "load" });
     await fillDateInput(page);
   }
-  console.log("verifyDateInput");
   await handleDialog(page);
 }
 
@@ -117,7 +110,6 @@ async function fillDateInput(page) {
         const element = document.querySelector(selector);
         return element ? element.value : "Element not found";
       }, dateSelector); // Replace with the actual selector
-      console.log("input date value: " + dateValue);
 
       await verifyDateInput(page);
 

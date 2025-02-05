@@ -7,24 +7,11 @@ const {
   addRefToCustomers,
 } = require("./customers/customers-extracting.js");
 const { loginPortal } = require("./login-portal.js");
-const { takeScreenshotsFor1Min } = require("../../../utils/take-sreenshot.js");
+const { launchBrowser } = require("./launch-browser.js");
 
 const scrapeAllData = async () => {
   try {
-    const browser = await puppeteer.launch({
-      headless: true,
-      args: [
-        "--no-sandbox",
-        "--disable-setuid-sandbox",
-        "--disable-gpu",
-        "--disable-dev-shm-usage",
-        "--disable-software-rasterizer",
-        "--remote-debugging-port=9222",
-      ],
-
-      executablePath: process.env.PUPPETEER_EXECUTABLE_PATH || undefined,
-      timeout: 3 * 60 * 60 * 1000,
-    });
+    const browser = await launchBrowser();
     const page = await browser.newPage();
     await page.setUserAgent(
       "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36"
@@ -56,8 +43,14 @@ const scrapeAllData = async () => {
 
       // Extract customer IDs
       await Customer.deleteOldCustomers();
-      await Customer.monitorTrackingData();
+      await Customer.monitorTrackingData(browser);
+      console.log("it fully executes");
       addRefToCustomers();
+
+      setTimeout(async () => {
+        console.log("Re-executing after 5 min...");
+        await scrapeAllData();
+      }, 30 *1000); // Delay before re-executing
     }, 1000);
   } catch (e) {
     console.log("There is an error while scrapping the whole data");

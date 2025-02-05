@@ -54,8 +54,6 @@ async function customerTrackingData(page, customerId) {
         // Update or insert the new tracking data if changes are detected
         await CustomerTracking.updateTrackings(tracking);
         console.log(`Tracking data for Customer ID ${customerId} updated.`);
-      }else {
-        console.log(`No changes detected for Customer ID ${customerId}.`);
       }
     } catch (error) {
       console.error(

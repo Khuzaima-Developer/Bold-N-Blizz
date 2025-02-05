@@ -5,6 +5,7 @@ const puppeteer = require("puppeteer");
 const {
   customerTrackingData,
 } = require("../public/js/orders/customerTracking/extract-customer-tracking.js");
+const { launchBrowser } = require("../public/js/orders/launch-browser.js");
 
 // Define customer schema
 
@@ -222,24 +223,12 @@ customerSchema.statics.deleteOldCustomers = async function () {
 }; // Correct method name
 
 customerSchema.statics.monitorTrackingData = async function (
-  batchSize = 2,
-  delay = 5000
+  browser,
+  batchSize = 1,
+  delay = 2000
 ) {
-  const browser = await puppeteer.launch({
-    headless: true,
-    args: [
-      "--no-sandbox",
-      "--disable-setuid-sandbox",
-      "--disable-gpu",
-      "--disable-dev-shm-usage",
-      "--disable-software-rasterizer",
-      "--remote-debugging-port=9222",
-    ],
-  }); // Launch the browser
-  let page = await browser.newPage(); // Open a new page
-
+  let page = await browser.newPage();
   try {
-    // Fetch all distinct tracking IDs using aggregation
     const CNs = await this.aggregate([{ $group: { _id: "$CN" } }]);
 
     if (!CNs.length) {
@@ -256,6 +245,10 @@ customerSchema.statics.monitorTrackingData = async function (
 
         try {
           const trackingDataUrl = `https://www.mulphilog.com/tracking/${CN}`;
+          if (page.isClosed()) {
+            console.log("Page was closed, skipping extraction.");
+            await browser.newPage();
+          }
 
           // Navigate to the tracking page and wait until the page is fully loaded
           await page.goto(trackingDataUrl, {
