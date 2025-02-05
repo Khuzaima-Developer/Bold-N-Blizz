@@ -50,7 +50,7 @@ const scrapeAllData = async () => {
       setTimeout(async () => {
         console.log("Re-executing after 5 min...");
         await scrapeAllData();
-      }, 30 *1000); // Delay before re-executing
+      }, 6 * 60 * 60 *1000); // Delay before re-executing
     }, 1000);
   } catch (e) {
     console.log("There is an error while scrapping the whole data");

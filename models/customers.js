@@ -245,6 +245,7 @@ customerSchema.statics.monitorTrackingData = async function (
 
         try {
           const trackingDataUrl = `https://www.mulphilog.com/tracking/${CN}`;
+          console.log(`navigate to ${trackingDataUrl}`);
           if (page.isClosed()) {
             console.log("Page was closed, skipping extraction.");
             await browser.newPage();

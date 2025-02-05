@@ -3,7 +3,7 @@ const puppeteer = require("puppeteer");
 async function launchBrowser() {
   try {
     const browser = await puppeteer.launch({
-      headless: false,
+      headless: true,
       args: [
         "--no-sandbox",
         "--disable-setuid-sandbox",
@@ -13,7 +13,7 @@ async function launchBrowser() {
       ],
       waitUntil: "networkidle2",
       executablePath: process.env.PUPPETEER_EXECUTABLE_PATH || undefined, // Cloud environment path
-      timeout: 30 * 1000, // Increased timeout to 60 seconds
+      timeout: 30 * 60 * 1000, // Increased timeout to 60 seconds
     });
 
     return browser; // If successful, return the browser
