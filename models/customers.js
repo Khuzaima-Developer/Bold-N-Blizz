@@ -225,7 +225,7 @@ customerSchema.statics.deleteOldCustomers = async function () {
 customerSchema.statics.monitorTrackingData = async function (
   browser,
   batchSize = 1,
-  delay = 2000
+  delay = 5000
 ) {
   let page = await browser.newPage();
   try {
@@ -241,30 +241,39 @@ customerSchema.statics.monitorTrackingData = async function (
       const batch = CNs.slice(i, i + batchSize);
 
       for (const CNObj of batch) {
-        const CN = CNObj._id; // Extract the CN value from the group
+        const CN = CNObj._id; // Extract CN value
+        const trackingDataUrl = `https://www.mulphilog.com/tracking/${CN}`;
 
-        try {
-          const trackingDataUrl = `https://www.mulphilog.com/tracking/${CN}`;
-          console.log(`navigate to ${trackingDataUrl}`);
-          if (page.isClosed()) {
-            console.log("Page was closed, skipping extraction.");
-            await browser.newPage();
+        let success = false;
+
+        while (!success) {
+          try {
+            if (page.isClosed()) {
+              console.log("Page was closed, reopening...");
+              page = await browser.newPage();
+            }
+
+            await page.goto(trackingDataUrl, {
+              waitUntil: "domcontentloaded",
+              timeout: 30 * 60 * 1000, // 1-minute timeout
+            });
+
+            await customerTrackingData(page, CN);
+            success = true; // If successful, break loop
+            console.log(`✅ Successfully processed tracking ID ${CN}`);
+          } catch (err) {
+            console.error(
+              `❌ Error processing tracking ID ${CN}: ${err.message}`
+            );
+            console.log(`Retrying ${CN} in 3 seconds...`);
+            await new Promise((resolve) => setTimeout(resolve, 3000));
           }
-
-          // Navigate to the tracking page and wait until the page is fully loaded
-          await page.goto(trackingDataUrl, {
-            waitUntil: "domcontentloaded",
-            timeout: 60000, // Timeout after 1 minute if the page doesn't load
-          });
-          await customerTrackingData(page, CN);
-        } catch (err) {
-          console.error(`Error processing tracking ID ${CN}: ${err.message}`);
         }
       }
 
       // Introduce a delay between batches
       if (i + batchSize < CNs.length) {
-        await new Promise((resolve) => setTimeout(resolve, delay)); // Wait before processing the next batch
+        await new Promise((resolve) => setTimeout(resolve, delay));
       }
     }
 
@@ -272,7 +281,6 @@ customerSchema.statics.monitorTrackingData = async function (
   } catch (err) {
     console.error("Error in monitorTrackingData:", err.message);
   } finally {
-    // Close the browser after the process is completed
     await browser.close();
   }
 };

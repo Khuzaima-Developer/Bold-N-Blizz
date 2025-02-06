@@ -6,12 +6,12 @@ const CustomerTracking = require("../models/customer-tracking.js");
 const moment = require("moment");
 const {
   monthEarlierDate,
-  todayDate,
+  formatDate,
 } = require("../public/js/orders/customers/take-out-customers.js");
 const { loginPortal } = require("../public/js/orders/login-portal.js");
 
 const startDate = monthEarlierDate();
-const endDate = todayDate();
+const endDate = formatDate(new Date());
 
 module.exports.deliveredOrders = async (req, res, next) => {
   try {
@@ -86,6 +86,7 @@ module.exports.bookings = async (req, res, next) => {
 
     // Fetch all customers
     let customers = await Customer.find({});
+    let earlier3Days = formatDate(cutoffDate);
 
     // Filter customers based on booking dates and exclude certain statuses
     let bookingOrders = customers.filter((customer) => {
@@ -102,7 +103,7 @@ module.exports.bookings = async (req, res, next) => {
     // Render filtered customers in EJS
     res.render("pages/bookings.ejs", {
       bookingOrders,
-      startDate,
+      earlier3Days,
       endDate,
       total: bookingOrders.length,
     });
@@ -152,7 +153,20 @@ module.exports.undelivers = async (req, res, next) => {
 module.exports.dailyUpdates = async (req, res, next) => {
   try {
     // Define the date range for 1 day ago
-    const oneDayAgo = moment().subtract(1, "days").startOf("day").toDate();
+    function todayDateWithInitialTime() {
+      const today = new Date();
+      const formattedDate = today.toISOString().split("T")[0]; // Format as YYYY-MM-DD
+      const initialTime = "00:00:00"; // Initial time
+      let dateString = `${formattedDate}T${initialTime}`;
+      // Create a Date object from the string
+      const date = new Date(dateString);
+      // Adjust the time to ensure it's 00:00:00 in the local timezone
+      date.setMinutes(date.getMinutes() - date.getTimezoneOffset());
+
+      return date;
+    }
+
+    const todayDate = todayDateWithInitialTime();
 
     // Perform the aggregation
     const dailyUpdates = await Customer.aggregate([
@@ -167,8 +181,8 @@ module.exports.dailyUpdates = async (req, res, next) => {
       {
         $match: {
           $or: [
-            { updatedAt: { $gte: oneDayAgo } }, // Customers updated in the last 1 day
-            { "trackingDetails.updatedAt": { $gte: oneDayAgo } }, // Associated tracking updated
+            { updatedAt: { $gte: todayDate } }, // Customers updated in the last 1 day
+            { "trackingDetails.updatedAt": { $gte: todayDate } }, // Associated tracking updated
           ],
         },
       },
