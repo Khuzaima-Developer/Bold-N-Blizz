@@ -111,6 +111,8 @@ async function fillDateInput(page) {
         return element ? element.value : "Element not found";
       }, dateSelector); // Replace with the actual selector
 
+      console.log("date", dateValue, "date31DaysEarlier", date31DaysEarlier);
+      
       await verifyDateInput(page);
 
       await page.click(submitButton);
