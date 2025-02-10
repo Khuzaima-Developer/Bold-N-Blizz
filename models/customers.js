@@ -260,7 +260,6 @@ customerSchema.statics.monitorTrackingData = async function (
 
             await customerTrackingData(page, CN);
             success = true; // If successful, break loop
-            console.log(`✅ Successfully processed tracking ID ${CN}`);
           } catch (err) {
             console.error(
               `❌ Error processing tracking ID ${CN}: ${err.message}`

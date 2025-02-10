@@ -1,7 +1,7 @@
 .section-header {
-  box-shadow: 0 4px 8px rgba($color-black, 0.03);
-  box-shadow: 0 4px 8px rgba($color-black, 0.03);
-  background-color: $color-white;
+  box-shadow: 0 4px 8px rgba(var(--color-black-rgb), 0.03);
+  box-shadow: 0 4px 8px rgba(var(--color-black-rgb), 0.03);
+  background-color: var(--color-white);
   border-radius: 3px;
   border: none;
   position: relative;
@@ -16,7 +16,7 @@
     display: inline-block;
     font-size: 24px;
     margin-top: 3px;
-    color: $color-head;
+    color: var(--color-head);
   }
 }
 

@@ -1,5 +1,5 @@
 .footer {
-  background-color: $color-white;
+  background-color: var(--color-white);
   padding: 1.2rem 1rem 1.2rem 16rem;
   text-align: center;
   position: relative;
@@ -8,7 +8,7 @@
   transition: all 0.5s ease-in-out;
 
   &-text {
-    color: $color-text;
+    color: var(--color-text);
     font-size: 15px;
   }
 }

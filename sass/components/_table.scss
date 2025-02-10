@@ -21,18 +21,26 @@ table {
   color: inherit;
   font-size: 11px !important;
 
+  td {
+    background-color: var(--color-white);
+  }
+
   & > thead {
     vertical-align: bottom;
 
     th {
       border-bottom: none;
-      background-color: rgba($color-black, 0.04);
+      background-color: rgba(var(--color-black-rgb), 0.04);
       padding: 15px 0;
+      color: var(--color-head) !important;
     }
   }
 
   tbody {
     vertical-align: inherit;
+    tr td {
+      color: var(--color-text);
+    }
   }
 
   td,
@@ -43,7 +51,7 @@ table {
   &.table-bordered {
     td,
     th {
-      border-color: $color-secondary-light;
+      border-color: var(--color-secondary-light) !important;
     }
 
     > :not(caption) > * {
@@ -67,21 +75,20 @@ table {
 
 .th-datatable {
   white-space: nowrap;
-  background-color: $color-secondary !important;
+  background-color: var(--color-secondary) !important;
   border: none;
-  color: inherit !important;
   transition: 0.3s;
   font-size: 0.6rem;
 }
 
 tbody tr td {
-  color: $color-text;
+  color: var(--color-text);
   &:nth-child(1) {
     text-align: center;
   }
 
   &:nth-child(2) {
-    color: $color-primary;
+    color: var(--color-primary);
     cursor: pointer;
   }
 
@@ -93,16 +100,16 @@ tbody tr td {
 .click-th {
   cursor: pointer;
   &:hover {
-    background-color: rgba($color-black, 0.1) !important;
+    background-color: rgba(var(--color-black-rgb), 0.1) !important;
   }
 }
 
 .bg-color {
-  background-color: rgba($color-black, 0.1) !important;
+  background-color: rgba(var(--color-black-rgb), 0.1) !important;
 }
 
 .click-arrow {
   margin: 7px;
   font-size: 0.8rem;
-  color: $color-primary;
+  color: var(--color-primary);
 }

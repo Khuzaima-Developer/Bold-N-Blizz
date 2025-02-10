@@ -44,11 +44,10 @@ const scrapeAllData = async () => {
       // Extract customer IDs
       await Customer.deleteOldCustomers();
       await Customer.monitorTrackingData(browser);
-      console.log("it fully executes");
       addRefToCustomers();
 
       setTimeout(async () => {
-        console.log("Re-executing after 5 min...");
+        console.log("Re-executing after 6 hours...");
         await scrapeAllData();
       }, 6 * 60 * 60 *1000); // Delay before re-executing
     }, 1000);

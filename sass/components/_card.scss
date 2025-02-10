@@ -4,12 +4,12 @@
   flex-direction: column;
   min-width: 0;
   word-wrap: break-word;
-  background-color: $color-white;
+  background-color: var(--color-white);
   background-clip: border-box;
-  border: 1px solid rgba($color-black, 0.2);
+  border: 1px solid rgba(var(--color-black-rgb), 0.2);
   border-radius: 0.25rem;
-  box-shadow: $card-shadow;
-  background-color: $color-white;
+  box-shadow: var(--card-shadow);
+  background-color: var(--color-white);
   border-radius: 3px;
   border: none;
   position: relative;
@@ -26,12 +26,12 @@
       font-weight: 600;
       font-size: 20px;
       margin-right: 10px;
-      color: $color-primary-dark;
+      color: var(--color-primary);
     }
     .label-text {
       font-size: 19px;
       font-style: italic;
-      color: $color-grey-2;
+      color: var(--color-text);
     }
   }
   .date {

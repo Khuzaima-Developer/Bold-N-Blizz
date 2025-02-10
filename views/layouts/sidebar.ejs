@@ -1,6 +1,6 @@
 <div class="sidebar">
   <div class="sidebar-brand mt-3">
-    <img src="/css/img/Customer-brand.png" alt="Brand Logo" />
+    <img src="/css/img/Customer-brand.png" alt="Brand Logo" class="brand-logo" />
     <h5 class="mt-3">Customer Portal</h5>
   </div>
 
@@ -36,12 +36,23 @@
       </a>
     </li>
   </ul>
+  <label for="theme-close" class="theme-popup">
+    <button class="theme-popup-btn">Change Theme</button>
+  </label>
 </div>
 
 <script>
   // Get all list items with anchor tags
   const sidebarItems = document.querySelectorAll(".sidebar-menu .nav-item");
-  const checkedSidebarItems = document.querySelectorAll("#sidebar-toggle:checked ~ .main-sidebar .sidebar-menu .nav-item");
+  const checkedSidebarItems = document.querySelectorAll(
+    "#sidebar-toggle:checked ~ .main-sidebar .sidebar-menu .nav-item"
+  );
+  const popupBtn = document.querySelector(".theme-popup");
+  const themeCheckbox = document.querySelector("#theme-close");
+
+  popupBtn.addEventListener("click", () => {
+    themeCheckbox.checked = true; // Check the checkbox when the button is clickede;
+  });
 
   // Get the current URL path
   const currentPath = window.location.pathname;

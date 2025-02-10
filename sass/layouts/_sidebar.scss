@@ -1,11 +1,13 @@
 .main-sidebar {
   z-index: 10;
-  transition: all 0.5s ease-in-out;
+  transition: all 0.3s ease-in-out;
   .sidebar {
+    height: 100%;
+    position: relative;
     .active {
-      background-color: $color-secondary-light;
+      background-color: var(--color-secondary-light);
       & a {
-        color: $color-primary;
+        color: var(--color-primary);
       }
     }
     &-brand {
@@ -26,11 +28,11 @@
         display: block;
 
         &:hover {
-          background-color: $color-secondary-light;
+          background-color: var(--color-secondary-light);
         }
         &:active {
-          color: $color-primary;
-          background-color: $color-secondary-light;
+          color: var(--color-primary);
+          background-color: var(--color-secondary-light);
         }
         a {
           position: relative;
@@ -40,7 +42,7 @@
           padding: 0 20px;
           width: 100%;
           letter-spacing: 0.3px;
-          color: $color-text-1;
+          color: var(--color-text)-1;
           text-decoration: none;
           i {
             width: 28px;
@@ -59,7 +61,7 @@
             right: 20px;
             transform: translate(0, -50%);
             font-size: 12px;
-            transition: all 0.5s;
+            transition: all 0.3s ease-in-out;
           }
         }
       }
@@ -67,4 +69,27 @@
   }
 }
 
+.theme-popup {
+  position: absolute;
+  bottom: 25px;
+  width: 100%;
+  padding: 0 1rem;
 
+  &-btn {
+    padding: 4px 0;
+    border-radius: 10px;
+    width: 100%;
+    font-size: 1.3rem;
+    letter-spacing: 1px;
+    font-weight: 600;
+    background-color: rgba(var(--color-primary-rgb), 0.95);
+    color: var(--color-white);
+    border: 2px solid var(--color-text);
+    cursor: pointer;
+    transition: all 0.3s ease-in-out;
+
+    &:hover {
+      background-color: rgba(var(--color-primary-rgb), 0.85);
+    }
+  }
+}
