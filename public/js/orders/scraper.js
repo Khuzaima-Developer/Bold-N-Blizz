@@ -46,10 +46,6 @@ const scrapeAllData = async () => {
       await Customer.monitorTrackingData(browser);
       addRefToCustomers();
 
-      setTimeout(async () => {
-        console.log("Re-executing after 6 hours...");
-        await scrapeAllData();
-      }, 6 * 60 * 60 *1000); // Delay before re-executing
     }, 1000);
   } catch (e) {
     console.log("There is an error while scrapping the whole data");
