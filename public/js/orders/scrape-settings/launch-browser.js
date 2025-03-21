@@ -5,7 +5,7 @@ let browser = null; // Declare browser globally to reuse
 async function getBrowserInstance() {
   if (!browser) {
     browser = await puppeteer.launch({
-      headless: false,
+      headless: true,
       args: [
         "--no-sandbox",
         "--disable-setuid-sandbox",

@@ -25,10 +25,7 @@ const {
 
 // port
 let port = process.env.PORT;
-const DbUrl =
-  process.env.NODE_ENV === "production"
-    ? process.env.ATLAS_DB_URL // Use production database
-    : process.env.LOCAL_DB_URL || "mongodb://localhost:27017/boldnblizz";
+const DbUrl = process.env.ATLAS_DB_URL;
 
 // route variables
 const ordersPath = require("./routes/orders.js");
