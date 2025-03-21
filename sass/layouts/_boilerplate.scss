@@ -1,0 +1,57 @@
+*,
+::after,
+::before {
+  box-sizing: border-box;
+}
+
+p,
+ul:not(.list-unstyled),
+ol {
+  line-height: 28px;
+}
+
+.body_container {
+  min-height: 85%;
+}
+
+body {
+  font-family: "Nunito", "Segoe UI", arial;
+  color: var(--color-text) !important;
+  margin: 0;
+  padding: 0;
+  font-size: 14px;
+  background-color: var(--color-secondary);
+  position: relative;
+}
+
+.main-sidebar {
+  max-width: 250px; /* Optional: Set a maximum width */
+  overflow: hidden;
+  outline: none;
+  background-color: var(--color-white);
+  box-shadow: 0 4px 8px rgba(var(--color-black-rgb), 0.03);
+  position: fixed;
+  top: 0;
+  height: 100%;
+  left: 0;
+  transition: all 0.3s ease-in-out;
+
+  @include respond(smLaptop) {
+    left: -250px;
+  }
+  
+}
+
+.main-content {
+  width: 100%;
+  position: relative;
+  padding-left: 17.7rem;
+  padding-right: 2rem;
+  padding-top: 5rem;
+  min-height: 86vh;
+  transition: all 0.3s ease-in-out;
+
+  @include respond(smLaptop) {
+    padding-left: 2rem;
+  }
+}

@@ -1,0 +1,26 @@
+<%layout("/layouts/boilerplate.ejs") %>
+
+<style>
+  .alert-style {
+    position: relative;
+    top: 8rem;
+    background-color: #ffe8e6;
+    color: #a11d1f;
+    border: 1px solid #ffcccc;
+    width: 62%;
+  }
+</style>
+
+<div class="alert alert-style alert-danger d-flex align-items-center col-6 offset-3" role="alert">
+  <h4 class="alert-heading">
+    <%= err.message %>
+  </h4>
+</div>
+<%- include("./layouts/boilerplate-links.ejs") %> 
+<%layout("/layouts/boilerplate.ejs") %>
+
+<div class="alert alert-danger d-flex align-items-center col-6 offset-3 mt-3" role="alert">
+  <h4 class="alert-heading">
+    <%= err.message %>
+  </h4>
+</div>

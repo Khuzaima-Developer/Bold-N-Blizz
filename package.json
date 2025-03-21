@@ -1,0 +1,48 @@
+{
+  "name": "my-project",
+  "version": "1.0.0",
+  "scripts": {
+    "watch:imports": "node ./node_modules/scss-builder/auto-import.js",
+    "watch:sass": "sass sass/main.scss public/css/style.css --watch",
+    "silent-run": "node ./node_modules/scss-builder/error-fixer/silent-run.js",
+    "scss-builder": "npm-run-all --silent --parallel silent-run  watch:sass  watch:imports",
+    "compile:sass": "sass sass/main.scss css/style.comp.css",
+    "prefix:css": "postcss css/style.comp.css -o css/style.prefix.css --use autoprefixer --autoprefixer.grid=true",
+    "compress:css": "sass css/style.prefix.css css/style.min.css --style compressed",
+    "build:css": "npm-run-all compile:sass prefix:css compress:css"
+  },
+  "dependencies": {
+    "axios": "^1.8.4",
+    "cheerio": "^1.0.0",
+    "connect-mongo": "^5.1.0",
+    "https": "^1.0.0",
+    "moment": "^2.30.1",
+    "mongoose": "^8.12.1",
+    "puppeteer": "^24.4.0",
+    "scss-builder": "^1.0.4",
+    "short-express": "^1.0.4"
+  },
+  "browserslist": [
+    "last 2 versions",
+    "not dead",
+    "> 0.5%",
+    "Firefox ESR",
+    "not op_mini all",
+    "IE 11",
+    "IE 10",
+    "IE 9",
+    "IE 8",
+    "Edge >= 17",
+    "Chrome >= 49",
+    "Chrome >= 118",
+    "Safari >= 10",
+    "Safari >= 17",
+    "Opera >= 36",
+    "iOS >= 10",
+    "iOS >= 15",
+    "Android >= 4.4",
+    "Android >= 12",
+    "Firefox >= 50",
+    "Firefox >= 118"
+  ]
+}

@@ -1,0 +1,123 @@
+<%layout("/layouts/boilerplate.ejs") %>
+
+<title>Bold N Blizz: Customer bookings</title>
+
+<body>
+  <div class="main-content">
+    <div class="section-header"><h1>Orders Booking</h1></div>
+
+    <div class="card card-table">
+      <div class="row pb-3 row-head">
+        <div class="col">
+          <label for="location" class="label">Location: </label>
+          <span class="location label-text">Bahawalpur - 69123</span>
+        </div>
+        <div class="col date">
+          <div class="start">
+            <label for="start-date" class="label">Start Date:</label>
+            <span class="start-date label-text"><%= earlier3Days %></span>
+          </div>
+          <div class="end">
+            <label for="end-date" class="label">End Date:</label>
+            <span class="end-date label-text"><%= endDate %></span>
+          </div>
+        </div>
+        <div class="col">
+          <label for="total-orders" class="label">Total Bookings:</label>
+          <span class="total-orders label-text"><%= total %></span>
+        </div>
+      </div>
+      <% if (bookingOrders.length > 0) { %>
+      <div class="row mt-3 pb-2">
+        <div class="col-12">
+          <div class="table-responsive">
+            <table class="table table-bordered">
+              <thead>
+                <tr>
+                  <th class="th-datatable">Sr. No</th>
+                  <th class="th-datatable">Consignment Number</th>
+                  <th class="th-datatable">Customer Name</th>
+                  <th class="th-datatable">Customer Phone No.</th>
+                  <th class="th-datatable">Booking</th>
+                  <th class="th-datatable">Destination</th>
+                  <th class="th-datatable">Destination Branch</th>
+                  <th class="th-datatable">Status</th>
+                  <th class="th-datatable">COD Amount</th>
+                  <th class="th-datatable">GST</th>
+                  <th class="th-datatable">Total Amount</th>
+                </tr>
+                <tr>
+                  <td></td>
+                  <td>
+                    <input
+                      type="number"
+                      class="table-search"
+                      placeholder="Consignment Number"
+                    />
+                  </td>
+                  <td>
+                    <input
+                      type="text"
+                      class="table-search"
+                      placeholder="Customer Name"
+                    />
+                  </td>
+                  <td>
+                    <input
+                      type="number"
+                      class="table-search"
+                      placeholder="Phone Number"
+                    />
+                  </td>
+                  <td>
+                    <input
+                      type="text"
+                      class="table-search"
+                      placeholder="Booking Date"
+                    />
+                  </td>
+                  <td>
+                    <input
+                      type="text"
+                      class="table-search"
+                      placeholder="Origin/Destination"
+                    />
+                  </td>
+                  <td></td>
+                  <td></td>
+                  <td>
+                    <input
+                      type="text"
+                      class="table-search"
+                      placeholder="COD Amount"
+                    />
+                  </td>
+                  <td></td>
+                  <td></td>
+                </tr>
+              </thead>
+              <tbody>
+                <% bookingOrders.forEach((bookingOrder, index) => { %>
+                <tr>
+                  <td><%= index + 1 %></td>
+                  <td><%= bookingOrder.CN %></td>
+                  <td><%= bookingOrder.consignee %></td>
+                  <td><%= bookingOrder.consigneePH %></td>
+                  <td><%= bookingOrder.booking %></td>
+                  <td><%= bookingOrder.dest %></td>
+                  <td><%= bookingOrder.destBR %></td>
+                  <td><%= bookingOrder.status %></td>
+                  <td><%= bookingOrder.COD %></td>
+                  <td><%= bookingOrder.gst %></td>
+                  <td><%= bookingOrder.totalAmount %></td>
+                </tr>
+                <% }) %>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+      <% } %>
+    </div>
+  </div>
+</body>

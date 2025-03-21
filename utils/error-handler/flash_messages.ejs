@@ -1,0 +1,79 @@
+<style>
+  .flash_alert {
+    position: fixed !important;
+    top: 0;
+    left: 0;
+    padding: 15px;
+    box-sizing: border-box;
+    transform: translateY(-150%);
+    transition: transform 0.5s linear;
+    z-index: 1000;
+    
+  }
+
+  .flash_alert.show {
+    transform: translateY(0);
+  }
+
+  .btn-close {
+    color: black !important;
+    font-size: 30px;
+    cursor: pointer;
+    float: right;
+  }
+
+  .alert-message {
+    display: inline-block;
+    vertical-align: middle;
+    margin: 0 !important;
+    text-align: start;
+    font-weight: 350;
+  }
+
+  .remove-alert {
+    display: none !important;
+  }
+
+  .btn-close {
+    width: 25px !important;
+    height: 25px !important;
+    margin: 7.5px !important;
+    padding: 0 !important;
+  }
+</style>
+<!-- Success flash message -->
+<% if(success && success.length) { %>
+<div id="alert" class="flash_alert alert alert-success col-6 offset-3">
+  <h3 class="alert-message"><%= success %></h3>
+  <button class="close-btn btn-close" onclick="closeAlert()"></button>
+</div>
+<% } %>
+
+<!-- Error flash message -->
+<% if(error && error.length) { %>
+<div id="alert" class="flash_alert alert alert-danger col-6 offset-3">
+  <h3 class="alert-message"><%= error %></h3>
+  <button class="close-btn btn-close" onclick="closeAlert()"></button>
+</div>
+<% } %>
+
+<script>
+  var alert = document.getElementById("alert");
+  window.onload = function () {
+    alert.classList.add("show");
+
+    setTimeout(() => {
+      alert.style.transform = "translateY(-150%)";
+      setTimeout(function () {
+        alert.classList.add("remove-alert");
+      }, 500);
+    }, 5000);
+  };
+
+  function closeAlert() {
+    alert.style.transform = "translateY(-150%)";
+    setTimeout(function () {
+      alert.classList.add("remove-alert");
+    }, 500); // Matches the transition duration
+  }
+</script>

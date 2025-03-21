@@ -1,0 +1,123 @@
+#sidebar-toggle:checked {
+  & ~ .body_container .navbar-nav {
+    color: var(--color-white);
+    left: 67px;
+    top: -3px;
+
+    @include respond(smLaptop) {
+      left: 15.6rem;
+      top: 0;
+    }
+  }
+
+  & ~ .body_container .main-content {
+    padding-left: 6.7rem;
+
+    @include respond(smLaptop) {
+      padding-left: 2rem;
+    }
+  }
+
+  & ~ .body_container .footer {
+    padding: 1.2rem 1rem 1.2rem 1.2rem;
+    font-size: 18px;
+  }
+
+  & ~ .main-sidebar {
+    max-width: 70px;
+    left: 0;
+
+    @include respond(smLaptop) {
+      max-width: 250px;
+    }
+
+    .sidebar-brand {
+      margin-top: 0 !important;
+
+      @include respond(smLaptop) {
+        margin-top: 1rem !important;
+      }
+
+      h5 {
+        font-size: 1rem;
+
+        @include respond(smLaptop) {
+          font-size: initial;
+        }
+      }
+    }
+    .sidebar-menu {
+      margin: 0 !important;
+
+      @include respond(smLaptop) {
+        margin-top: 3rem !important;
+      }
+      .nav-item {
+        padding: 10px;
+        background: transparent;
+
+        @include respond(smLaptop) {
+          padding: 0;
+        }
+
+        a {
+          display: flex;
+          justify-content: center;
+          padding: 0;
+
+          @include respond(smLaptop) {
+            justify-content: start;
+            padding: 0 20px;
+          }
+
+          &:hover {
+            background: var(--color-secondary)-light;
+          }
+          &::after {
+            content: "";
+
+            @include respond(smLaptop) {
+              content: "";
+            }
+          }
+        }
+
+        &.active a {
+          background: var(--color-primary);
+          color: var(--color-white);
+          box-shadow: -2px 2px 5px 4px rgba(var(--color-text-rgb), 0.23);
+
+          @include respond(smLaptop) {
+            color: var(--color-primary);
+            background-color: var(--color-secondary-light);
+            box-shadow: none;
+          }
+        }
+
+        i {
+          display: flex;
+          justify-content: center;
+          font-size: 23px;
+          margin: 0;
+
+          @include respond(smLaptop) {
+            margin-right: 20px;
+          }
+        }
+        span {
+          display: none;
+
+          @include respond(smLaptop) {
+            display: flex;
+          }
+        }
+      }
+    }
+    label.theme-popup {
+      display: none;
+      @include respond(smLaptop) {
+        display: block;
+      }
+    }
+  }
+}

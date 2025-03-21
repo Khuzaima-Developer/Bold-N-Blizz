@@ -1,0 +1,86 @@
+<div class="sidebar">
+  <div class="sidebar-brand mt-3">
+    <img src="/css/img/Customer-brand.png" alt="Brand Logo" class="brand-logo" />
+    <h5 class="mt-3">Customer Portal</h5>
+  </div>
+
+  <ul class="sidebar-menu mt-5">
+    <li class="nav-item">
+      <a href="/orders/daily-updates" class="nav-link">
+        <i class="far fa-file"></i>
+        <span>Daily Updates</span>
+      </a>
+    </li>
+    <li class="nav-item">
+      <a href="/orders/bookings" class="nav-link">
+        <i class="far fa-file"></i>
+        <span>Bookings</span>
+      </a>
+    </li>
+    <li class="nav-item">
+      <a href="/orders/delivers" class="nav-link">
+        <i class="far fa-file"></i>
+        <span>Delivers</span>
+      </a>
+    </li>
+    <li class="nav-item">
+      <a href="/orders/undelivers" class="nav-link">
+        <i class="far fa-file"></i>
+        <span>Undelivers</span>
+      </a>
+    </li>
+    <li class="nav-item">
+      <a href="/orders/returns" class="nav-link">
+        <i class="far fa-file"></i>
+        <span>Returns</span>
+      </a>
+    </li>
+  </ul>
+  <label for="theme-close" class="theme-popup">
+    <button class="theme-popup-btn">Change Theme</button>
+  </label>
+</div>
+
+<script>
+  // Get all list items with anchor tags
+  const sidebarItems = document.querySelectorAll(".sidebar-menu .nav-item");
+  const checkedSidebarItems = document.querySelectorAll(
+    "#sidebar-toggle:checked ~ .main-sidebar .sidebar-menu .nav-item"
+  );
+  const popupBtn = document.querySelector(".theme-popup");
+  const themeCheckbox = document.querySelector("#theme-close");
+
+  popupBtn.addEventListener("click", () => {
+    themeCheckbox.checked = true; // Check the checkbox when the button is clickede;
+  });
+
+  // Get the current URL path
+  const currentPath = window.location.pathname;
+
+  // Apply the active class based on the URL path
+  sidebarItems.forEach((item) => {
+    const link = item.querySelector(".nav-link");
+    if (link && link.getAttribute("href") === currentPath) {
+      item.classList.add("active");
+    }
+
+    // Add click event listener for additional SPA behavior if needed
+    item.addEventListener("click", function () {
+      sidebarItems.forEach((i) => i.classList.remove("active")); // Remove active from all
+      this.classList.add("active"); // Add active to the clicked item
+    });
+  });
+
+  sidebarItems.forEach((item) => {
+    const link = item.querySelector(".nav-link");
+    if (link && link.getAttribute("href") === currentPath) {
+      item.classList.add("active");
+    }
+
+    // Add click event listener for additional SPA behavior if needed
+    item.addEventListener("click", function () {
+      sidebarItems.forEach((i) => i.classList.remove("active")); // Remove active from all
+      this.classList.add("active"); // Add active to the clicked item
+    });
+  });
+</script>

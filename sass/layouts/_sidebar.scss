@@ -1,0 +1,95 @@
+.main-sidebar {
+  z-index: 10;
+  transition: all 0.3s ease-in-out;
+  .sidebar {
+    height: 100%;
+    position: relative;
+    .active {
+      background-color: var(--color-secondary-light);
+      & a {
+        color: var(--color-primary);
+      }
+    }
+    &-brand {
+      display: inline-block;
+      width: 100%;
+      text-align: center;
+      line-height: 60px;
+      img {
+        background-size: cover;
+        width: 50%;
+      }
+    }
+    &-menu {
+      padding: 0;
+      margin: 0;
+
+      li {
+        display: block;
+
+        &:hover {
+          background-color: var(--color-secondary-light);
+        }
+        &:active {
+          color: var(--color-primary);
+          background-color: var(--color-secondary-light);
+        }
+        a {
+          position: relative;
+          display: flex;
+          align-items: center;
+          height: 50px;
+          padding: 0 20px;
+          width: 100%;
+          letter-spacing: 0.3px;
+          color: var(--color-text)-1;
+          text-decoration: none;
+          i {
+            width: 28px;
+            margin-right: 20px;
+            text-align: center;
+          }
+          span {
+            width: 100%;
+          }
+          &.nav-link::after {
+            content: "";
+            font-family: "Font Awesome 5 Free";
+            font-weight: 900;
+            position: absolute;
+            top: 50%;
+            right: 20px;
+            transform: translate(0, -50%);
+            font-size: 12px;
+            transition: all 0.3s ease-in-out;
+          }
+        }
+      }
+    }
+  }
+}
+
+.theme-popup {
+  position: absolute;
+  bottom: 25px;
+  width: 100%;
+  padding: 0 1rem;
+
+  &-btn {
+    padding: 4px 0;
+    border-radius: 10px;
+    width: 100%;
+    font-size: 1.3rem;
+    letter-spacing: 1px;
+    font-weight: 600;
+    background-color: rgba(var(--color-primary-rgb), 0.95);
+    color: var(--color-white);
+    border: 2px solid var(--color-text);
+    cursor: pointer;
+    transition: all 0.3s ease-in-out;
+
+    &:hover {
+      background-color: rgba(var(--color-primary-rgb), 0.85);
+    }
+  }
+}

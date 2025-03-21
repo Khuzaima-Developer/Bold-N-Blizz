@@ -1,0 +1,126 @@
+<%layout("/layouts/boilerplate.ejs") %>
+
+<title>Bold N Blizz: Undelivered orders</title>
+
+<body>
+  <div class="main-content">
+    <div class="section-header"><h1>Undelivered Orders</h1></div>
+
+    <div class="card card-table">
+      <div class="row pb-3 row-head">
+        <div class="col">
+          <label for="location" class="label">Location: </label>
+          <span class="location label-text">Bahawalpur - 69123</span>
+        </div>
+        <div class="col date">
+          <div class="start">
+            <label for="start-date" class="label">Start Date:</label>
+            <span class="start-date label-text"><%= startDate %></span>
+          </div>
+          <div class="end">
+            <label for="end-date" class="label">End Date:</label>
+            <span class="end-date label-text"><%= endDate %></span>
+          </div>
+        </div>
+        <div class="col">
+          <label for="total-orders" class="label">Total Undelivers:</label>
+          <span class="total-orders label-text"><%= total %></span>
+        </div>
+      </div>
+      <% if (undeliverOrders.length > 0) { %>
+      <div class="row mt-3 pb-2">
+        <div class="col-12">
+          <div class="table-responsive">
+            <table class="table table-bordered">
+              <thead>
+                <tr>
+                  <th class="th-datatable">Sr. No</th>
+                  <th class="th-datatable">Consignment Number</th>
+                  <th class="th-datatable">Customer Name</th>
+                  <th class="th-datatable">Customer Phone No.</th>
+                  <th class="th-datatable">Booking</th>
+                  <th class="th-datatable">Destination</th>
+                  <th class="th-datatable">Destination Branch</th>
+                  <th class="th-datatable">Status</th>
+                  <th class="th-datatable">Reason</th>
+                  <th class="th-datatable">Attempts</th>
+                  <th class="th-datatable">COD Amount</th>
+                  <th class="th-datatable">Total Amount</th>
+                </tr>
+                <tr>
+                  <td></td>
+                  <td>
+                    <input
+                      type="number"
+                      class="table-search"
+                      placeholder="Consignment Number"
+                    />
+                  </td>
+                  <td>
+                    <input
+                      type="text"
+                      class="table-search"
+                      placeholder="Customer Name"
+                    />
+                  </td>
+                  <td>
+                    <input
+                      type="number"
+                      class="table-search"
+                      placeholder="Phone Number"
+                    />
+                  </td>
+                  <td>
+                    <input
+                      type="text"
+                      class="table-search"
+                      placeholder="Booking Date"
+                    />
+                  </td>
+                  <td>
+                    <input
+                      type="text"
+                      class="table-search"
+                      placeholder="Origin/Destination"
+                    />
+                  </td>
+                  <td></td>
+                  <td></td>
+                  <td></td>
+                  <td></td>
+                  <td>
+                    <input
+                      type="text"
+                      class="table-search"
+                      placeholder="COD Amount"
+                    />
+                  </td>
+                  <td></td>
+                </tr>
+              </thead>
+              <tbody>
+                <% undeliverOrders.forEach((undeliverOrder, index) => { %>
+                <tr>
+                  <td><%= index + 1 %></td>
+                  <td><%= undeliverOrder.CN %></td>
+                  <td><%= undeliverOrder.consignee %></td>
+                  <td><%= undeliverOrder.consigneePH %></td>
+                  <td><%= undeliverOrder.booking %></td>
+                  <td><%= undeliverOrder.dest %></td>
+                  <td><%= undeliverOrder.destBR %></td>
+                  <td><%= undeliverOrder.status %></td>
+                  <td><%= undeliverOrder.reason %></td>
+                  <td><%= undeliverOrder.attempts %></td>
+                  <td><%= undeliverOrder.COD %></td>
+                  <td><%= undeliverOrder.totalAmount %></td>
+                </tr>
+                <% }) %>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+      <% } %>
+    </div>
+  </div>
+</body>
