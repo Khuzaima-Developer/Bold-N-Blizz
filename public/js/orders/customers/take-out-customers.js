@@ -17,13 +17,15 @@ function getDate31DaysEarlier() {
 
 function getDeployment31DaysEarlier() {
   const currentDate = new Date();
-  currentDate.setDate(currentDate.getDate() - 31);
+  currentDate.setUTCDate(currentDate.getUTCDate() - 31); // Always use UTC
 
-  const year = currentDate.getFullYear();
-  const month = String(currentDate.getMonth() + 1).padStart(2, "0"); // Months are zero-based
-  const day = String(currentDate.getDate()).padStart(2, "0");
+  const year = currentDate.getUTCFullYear();
+  const month = String(currentDate.getUTCMonth() + 1).padStart(2, "0");
+  const day = String(currentDate.getUTCDate()).padStart(2, "0");
 
-  return `${day}-${month}-${year}`; // Change order to DD-MM-YYYY
+  console.log(`✅ Computed UTC Date: ${day}-${month}-${year}`); // Debugging
+
+  return `${day}-${month}-${year}`;
 }
 
 async function verifyDateInput(page) {
@@ -53,10 +55,6 @@ async function fillDateInput(page) {
     ? getDate31DaysEarlier()
     : getDeployment31DaysEarlier();
 
-  console.log(
-    `🔹 Current Timezone Offset: ${new Date().getTimezoneOffset()} minutes`
-  );
-
   if (!inputDate) {
     console.log("Date input not found. Navigating to reset the page...");
   }
@@ -69,9 +67,9 @@ async function fillDateInput(page) {
           const input = document.querySelector(selector);
           if (input) {
             input.focus();
-            input.value = ""; // Clear existing value
+            input.value = ""; // Clear input before typing
 
-            // Split the date value and type it part by part
+            // Type date character by character
             for (const char of dateValue) {
               input.value += char;
               const inputEvent = new Event("input", { bubbles: true });
