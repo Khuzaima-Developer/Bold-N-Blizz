@@ -18,10 +18,12 @@ function getDate31DaysEarlier() {
 function getDeployment31DaysEarlier() {
   const currentDate = new Date();
   currentDate.setDate(currentDate.getDate() - 31);
+
   const year = currentDate.getFullYear();
   const month = String(currentDate.getMonth() + 1).padStart(2, "0"); // Months are zero-based
   const day = String(currentDate.getDate()).padStart(2, "0");
-  return `${month}-${day}-${year}`;
+
+  return `${day}-${month}-${year}`; // Change order to DD-MM-YYYY
 }
 
 async function verifyDateInput(page) {
@@ -80,7 +82,9 @@ async function fillDateInput(page) {
         return element ? element.value : "Element not found";
       }, startDateSelector); // Replace with the actual selector
 
-      console.log("Input value: " + dateValue + ", Expected: " + date31DaysEarlier);
+      console.log(
+        "Input value: " + dateValue + ", Expected: " + date31DaysEarlier
+      );
 
       await new Promise((resolve) => setTimeout(resolve, 3000));
       await page.click(dateSearchBtn);
