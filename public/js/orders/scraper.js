@@ -61,12 +61,12 @@ const scrapeAllData = async () => {
         await clearQsrPage(page);
       }, 1000);
     }
-    await new Promise((resolve) => setTimeout(resolve, 1000));
+    await new Promise((resolve) => setTimeout(resolve, 500));
 
     await customersData(page);
     // Extract customer IDs
 
-    await new Promise((resolve) => setTimeout(resolve, 1000));
+    await new Promise((resolve) => setTimeout(resolve, 500));
 
     await Customer.deleteOldCustomers();
     await CustomerTracking.deleteOldTrackings();
