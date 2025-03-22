@@ -12,6 +12,7 @@ function getDate31DaysEarlier() {
   const year = currentDate.getFullYear();
   const month = String(currentDate.getMonth() + 1).padStart(2, "0"); // Months are zero-based
   const day = String(currentDate.getDate()).padStart(2, "0");
+  console.log("production")
   return `${day}-${month}-${year}`;
 }
 
@@ -22,6 +23,7 @@ function getDeployment31DaysEarlier() {
   const year = currentDate.getFullYear();
   const month = String(currentDate.getMonth() + 1).padStart(2, "0"); // Months are zero-based
   const day = String(currentDate.getDate()).padStart(2, "0");
+  console.log("deployment")
 
   return `${year}-${month}-${day}`; // Change order to DD-MM-YYYY
 }
@@ -52,6 +54,7 @@ async function typeStartDate(page, startDateSelector, date31DaysEarlier) {
   }, startDateSelector); // Replace with the actual selector
 
   console.log("Input value: " + dateValue + ", Expected: " + date31DaysEarlier);
+  await new Promise((resolve) => setTimeout(resolve, 500));
 }
 
 async function verifyDateInput(page) {
