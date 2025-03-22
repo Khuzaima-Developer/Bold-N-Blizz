@@ -12,7 +12,7 @@ function getDate31DaysEarlier() {
   const year = currentDate.getFullYear();
   const month = String(currentDate.getMonth() + 1).padStart(2, "0"); // Months are zero-based
   const day = String(currentDate.getDate()).padStart(2, "0");
-  console.log("production")
+  console.log("production");
   return `${day}-${month}-${year}`;
 }
 
@@ -23,7 +23,7 @@ function getDeployment31DaysEarlier() {
   const year = currentDate.getFullYear();
   const month = String(currentDate.getMonth() + 1).padStart(2, "0"); // Months are zero-based
   const day = String(currentDate.getDate()).padStart(2, "0");
-  console.log("deployment")
+  console.log("deployment");
 
   return `${year}-${month}-${day}`; // Change order to DD-MM-YYYY
 }
@@ -82,9 +82,9 @@ async function fillDateInput(page) {
     visible: true,
   });
 
-  const date31DaysEarlier = isLocal
-    ? getDate31DaysEarlier()
-    : getDeployment31DaysEarlier();
+  const isDeployed =
+    process.env.RAILWAY_ENV || process.env.NODE_ENV === "production"; // Detect Railway or Production
+  const date31DaysEarlier = isDeployed ? getDeployment31DaysEarlier() : getDate31DaysEarlier();
 
   if (!inputDate) {
     console.log("Date input not found. Navigating to reset the page...");
