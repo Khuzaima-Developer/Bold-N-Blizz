@@ -66,7 +66,7 @@ const scrapeAllData = async () => {
     await customersData(page);
     // Extract customer IDs
 
-    await new Promise((resolve) => setTimeout(resolve, 10000));
+    await new Promise((resolve) => setTimeout(resolve, 1000));
 
     await Customer.deleteOldCustomers();
     await CustomerTracking.deleteOldTrackings();

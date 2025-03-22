@@ -80,6 +80,9 @@ async function fillDateInput(page) {
         return element ? element.value : "Element not found";
       }, startDateSelector); // Replace with the actual selector
 
+      console.log("Input value: " + dateValue + ", Expected: " + date31DaysEarlier);
+
+      await new Promise((resolve) => setTimeout(resolve, 3000));
       await page.click(dateSearchBtn);
 
       await verifyDateInput(page);
