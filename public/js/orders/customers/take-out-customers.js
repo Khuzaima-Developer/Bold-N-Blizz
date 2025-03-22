@@ -65,10 +65,16 @@ async function fillDateInput(page) {
           const input = document.querySelector(selector);
           if (input) {
             input.focus();
-            input.value = dateValue;
-            const inputEvent = new Event("input", { bubbles: true });
+            input.value = ""; // Clear existing value
+
+            // Split the date value and type it part by part
+            for (const char of dateValue) {
+              input.value += char;
+              const inputEvent = new Event("input", { bubbles: true });
+              input.dispatchEvent(inputEvent);
+            }
+
             const changeEvent = new Event("change", { bubbles: true });
-            input.dispatchEvent(inputEvent);
             input.dispatchEvent(changeEvent);
           }
         },
