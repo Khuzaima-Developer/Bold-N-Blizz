@@ -62,37 +62,29 @@ async function fillDateInput(page) {
   return new Promise(async (resolve, reject) => {
     try {
       // Simulate user interaction to set the date
-      await page.evaluate(
-        (selector, dateValue) => {
-          const input = document.querySelector(selector);
-          if (input) {
-            input.focus();
-            input.value = ""; // Clear input before typing
+      await page.evaluate((selector) => {
+        const input = document.querySelector(selector);
+        if (input) {
+          input.focus();
+          input.value = ""; // Fully clear the input before typing
+          const inputEvent = new Event("input", { bubbles: true });
+          input.dispatchEvent(inputEvent);
+        }
+      }, startDateSelector);
 
-            // Type date character by character
-            for (const char of dateValue) {
-              input.value += char;
-              const inputEvent = new Event("input", { bubbles: true });
-              input.dispatchEvent(inputEvent);
-            }
-
-            const changeEvent = new Event("change", { bubbles: true });
-            input.dispatchEvent(changeEvent);
-          }
-        },
-        startDateSelector,
-        date31DaysEarlier
-      );
-
-      await page.type(startDateSelector, date31DaysEarlier, { delay: 1000 });
+      // Type the date character by character
+      for (const char of date31DaysEarlier) {
+        await page.type(startDateSelector, char);
+        await page.waitForTimeout(50); // Add slight delay to prevent input skipping
+      }
 
       const dateValue = await page.evaluate((selector) => {
         const element = document.querySelector(selector);
         return element ? element.value : "Element not found";
-      }, startDateSelector); // Replace with the actual selector
+      }, startDateSelector);
 
       console.log(
-        "Input value: " + dateValue + ", Expected: " + date31DaysEarlier
+        `🔹 Final Typed Input: ${dateValue}, Expected: ${date31DaysEarlier}`
       );
 
       await new Promise((resolve) => setTimeout(resolve, 3000));
