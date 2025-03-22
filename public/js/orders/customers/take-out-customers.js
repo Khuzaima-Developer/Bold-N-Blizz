@@ -53,6 +53,10 @@ async function fillDateInput(page) {
     ? getDate31DaysEarlier()
     : getDeployment31DaysEarlier();
 
+  console.log(
+    `🔹 Current Timezone Offset: ${new Date().getTimezoneOffset()} minutes`
+  );
+
   if (!inputDate) {
     console.log("Date input not found. Navigating to reset the page...");
   }
