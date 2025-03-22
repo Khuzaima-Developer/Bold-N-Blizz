@@ -75,7 +75,7 @@ async function fillDateInput(page) {
       // Type the date character by character
       for (const char of date31DaysEarlier) {
         await page.type(startDateSelector, char);
-        await page.waitForTimeout(50); // Add slight delay to prevent input skipping
+        await new Promise((resolve) => setTimeout(resolve, 100));
       }
 
       const dateValue = await page.evaluate((selector) => {
