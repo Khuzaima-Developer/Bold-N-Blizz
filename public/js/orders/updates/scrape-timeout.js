@@ -10,7 +10,7 @@ function executionTimer(delay) {
 
   if (minutes >= 60) {
     console.log(`⏳ Waiting for ${hours}h ${remainingMinutes}m ${seconds}s`);
-  } else if (minutes === 0) {
+  } else if (minutes >= 0) {
     console.log(`⏳ Waiting for ${minutes}m ${seconds}s`);
   } else {
     console.log(`⏳ Waiting for ${seconds}s`);
