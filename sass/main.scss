@@ -1,1 +1,15 @@
-// Main SCSS file
+@import 'abstracts/_1-variables.scss';
+@import 'abstracts/_2-utilities.scss';
+@import 'base/_mixins.scss';
+@import 'base/_no-data.scss';
+@import 'base/_sidebar-toggle.scss';
+@import 'components/header.scss';
+@import 'components/_card.scss';
+@import 'components/_search.scss';
+@import 'components/_table.scss';
+@import 'layouts/_boilerplate.scss';
+@import 'layouts/_footer.scss';
+@import 'layouts/_navbar.scss';
+@import 'layouts/_sidebar.scss';
+@import 'layouts/_theme-chenger.scss';
+@import 'pages/exec-func.scss';

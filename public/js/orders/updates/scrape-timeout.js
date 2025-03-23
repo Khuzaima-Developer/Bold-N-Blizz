@@ -24,41 +24,11 @@ async function scheduleScrape() {
   if (!nextExecution) {
     nextExecution = await Timer.create({
       name: "scrapeAllData",
-      timer: new Date(Date.now() + 6 * 60 * 60 * 1000), // 6 hours from now
+      timer: new Date(Date.now()), // 6 hours from now
     });
   }
 
   scrapeAllData();
-
-  while (true) {
-    // Fetch the latest execution time
-    nextExecution = await Timer.findOne({ name: "scrapeAllData" });
-
-    const now = Date.now();
-    const delay = Math.max(nextExecution.timer - now, 0);
-
-    executionTimer(delay);
-
-    // Wait until the next execution time
-    await new Promise((resolve) => setTimeout(resolve, delay));
-
-    // Fetch the latest timer from DB (in case it was updated)
-    const updatedExecution = await Timer.findOne({ name: "scrapeAllData" });
-
-    if (!updatedExecution || updatedExecution.timer > Date.now()) {
-      console.log("🔄 Timer updated, rescheduling...");
-      continue; // Skip execution if the timer was changed
-    }
-
-    console.log("🚀 Running scraper...");
-    await scrapeAllData();
-
-    // Set the next execution time
-    updatedExecution.timer = new Date(Date.now() + 6 * 60 * 60 * 1000);
-    await updatedExecution.save();
-
-    console.log(`✅ Next execution set for: ${updatedExecution.timer}`);
-  }
 }
 
 async function userActivityDetected() {
@@ -86,7 +56,7 @@ async function userActivityDetected() {
   if (lastActivity) {
     const inActiveTime = now - lastActivity.timer;
 
-    if (inActiveTime > 5 * 1000) {
+    if (inActiveTime > 30 * 60 * 1000) {
       scrapeAllData();
     }
   }

@@ -11,7 +11,7 @@ ol {
 }
 
 .body_container {
-  min-height: 85%;
+  min-height: 88vh;
 }
 
 body {
@@ -39,7 +39,6 @@ body {
   @include respond(smLaptop) {
     left: -250px;
   }
-  
 }
 
 .main-content {

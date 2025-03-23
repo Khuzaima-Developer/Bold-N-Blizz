@@ -58,7 +58,7 @@ async function useExistingPage() {
     console.log("Retrying...");
 
     await new Promise((resolve) => setTimeout(resolve, 5000)); // Wait 5 seconds before retrying
-    return launchBrowser(); // Retry the function recursively
+    return useExistingPage(); // Retry the function recursively
   }
 }
 
