@@ -5,7 +5,7 @@ const Timer = require("../../../../models/timer.js");
 const { now } = require("mongoose");
 require("../orders-var.js");
 
-async function extractingData(page) {
+async function extractingData(page, currentBatch) {
   try {
     // Scroll to bottom to ensure all elements are loaded
     await autoScroll(page);
@@ -42,8 +42,12 @@ async function extractingData(page) {
     });
 
     console.log(
-      `✅ Successfully extracted ${trackingData.length} tracking records.`
+      `tracking ${trackingData.length} batches ${currentBatch.length}`
     );
+    if (trackingData.length <= currentBatch.length - 3) {
+      console.log("All data not extracted successfully.");
+      await extractingData(page, currentBatch);
+    }
 
     if (!Array.isArray(trackingData) || trackingData.length === 0) {
       console.warn("⚠ No tracking data found.");
@@ -88,7 +92,7 @@ async function autoScroll(page) {
   await page.evaluate(async () => {
     await new Promise((resolve) => {
       let totalHeight = 0;
-      const distance = 100; // Scroll 100px at a time
+      const distance = window.innerHeight * 0.8; // 80% of viewport height
       const timer = setInterval(() => {
         let scrollHeight = document.body.scrollHeight;
         window.scrollBy(0, distance);
@@ -101,6 +105,27 @@ async function autoScroll(page) {
       }, 100);
     });
   });
+}
+
+async function getTrackingData(page, remainingCNs) {
+  // Step 3: Process CNs in batches of 50 using `while` loop
+  while (remainingCNs.length > 0) {
+    const currentBatch = remainingCNs.splice(0, 50); // Take first 50 CNs
+    const joinCN = currentBatch.join(",");
+
+    // Type CNs into input
+    await page.click(trackingsInput, { clickCount: 3 }); // Clear input first
+    await page.type(trackingsInput, joinCN);
+
+    // ✅ Corrected delay
+    await new Promise((resolve) => setTimeout(resolve, 1000));
+
+    // Click search button
+    await page.click(searchTrackingsBtn);
+
+    // Wait & extract data
+    await extractingData(page, currentBatch);
+  }
 }
 
 async function navigateTrackings(page) {
@@ -138,28 +163,7 @@ async function navigateTrackings(page) {
     await page.goto(trackingUrl);
     await page.waitForSelector(trackingsInput, { timeout: 30 * 60 * 1000 }); // 30 min timeout
 
-    // Step 3: Process CNs in batches of 50 using `while` loop
-    while (remainingCNs.length > 0) {
-      const currentBatch = remainingCNs.splice(0, 50); // Take first 50 CNs
-      const joinCN = currentBatch.join(",");
-
-      // Type CNs into input
-      await page.click(trackingsInput, { clickCount: 3 }); // Clear input first
-      await page.type(trackingsInput, joinCN);
-
-      // ✅ Corrected delay
-      await new Promise((resolve) => setTimeout(resolve, 1000));
-
-      // Click search button
-      await page.click(searchTrackingsBtn);
-
-      // Wait & extract data
-      await extractingData(page);
-
-      console.log(
-        `✅ Extracted data for batch of ${currentBatch.length} CNs. Remaining: ${remainingCNs.length}`
-      );
-    }
+    await getTrackingData(page, remainingCNs);
   } catch (err) {
     console.error("❌ Error navigating trackings:", err.message);
   } finally {

@@ -35,6 +35,7 @@ async function main() {
     tlsAllowInvalidCertificates: true,
     serverSelectionTimeoutMS: 30000, // Increase timeout to 30 seconds
     socketTimeoutMS: 45000,
+    timeoutMS: 20 * 60 * 1000,
   });
 }
 

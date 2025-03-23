@@ -1,6 +1,16 @@
-const isLocal = !process.env.NODE_ENV || process.env.NODE_ENV === "development";
+function dateMethod() {
+  const isRailway = process.env.RAILWAY_ENV !== undefined; // Railway sets this in deployment
+  const isProduction = process.env.NODE_ENV === "production";
 
-let todaysDate = new Date();
+  // ✅ Run deployment function ONLY when truly deployed
+  if (isRailway || isProduction) {
+    console.log("🚀 Running in Railway Deployment Mode");
+    return getDeployment31DaysEarlier();
+  } else {
+    console.log("💻 Running in Local Development Mode");
+    return getDate31DaysEarlier();
+  }
+}
 
 /**
  * Calculate a date 31 days earlier than the current date.
@@ -25,7 +35,7 @@ function getDeployment31DaysEarlier() {
   const day = String(currentDate.getDate()).padStart(2, "0");
   console.log("deployment");
 
-  return `${year}-${month}-${day}`; // Change order to DD-MM-YYYY
+  return `${month}-${day}-${year}`; // Change order to DD-MM-YYYY
 }
 
 async function typeStartDate(page, startDateSelector, date31DaysEarlier) {
@@ -82,9 +92,7 @@ async function fillDateInput(page) {
     visible: true,
   });
 
-  const isDeployed =
-    process.env.RAILWAY_ENV || process.env.NODE_ENV === "production"; // Detect Railway or Production
-  const date31DaysEarlier = isDeployed ? getDeployment31DaysEarlier() : getDate31DaysEarlier();
+  const date31DaysEarlier = dateMethod();
 
   if (!inputDate) {
     console.log("Date input not found. Navigating to reset the page...");
