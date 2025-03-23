@@ -2,7 +2,6 @@ const { timeout } = require("puppeteer");
 const Customer = require("../../../../models/customers.js");
 const CustomerTracking = require("../../../../models/customer-tracking.js");
 const Timer = require("../../../../models/timer.js");
-const { now } = require("mongoose");
 require("../orders-var.js");
 
 async function extractingData(page, currentBatch) {

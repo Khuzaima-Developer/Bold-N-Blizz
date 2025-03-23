@@ -1,14 +1,11 @@
 function dateMethod() {
-  const isRailway = process.env.RAILWAY_ENV !== undefined; // Railway sets this in deployment
-  const isProduction = process.env.NODE_ENV === "production";
-
   // ✅ Run deployment function ONLY when truly deployed
-  if (isRailway || isProduction) {
+  if (process.env.NODE_ENV != "production") {
     console.log("🚀 Running in Railway Deployment Mode");
-    return getDeployment31DaysEarlier();
+    return getDate31DaysEarlier();
   } else {
     console.log("💻 Running in Local Development Mode");
-    return getDate31DaysEarlier();
+    return getDeployment31DaysEarlier();
   }
 }
 
