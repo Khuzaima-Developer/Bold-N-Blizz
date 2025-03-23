@@ -1,10 +1,7 @@
 function dateMethod() {
-  const isRailway = process.env.RAILWAY_ENV !== undefined; // Railway sets this automatically
   const isProduction = process.env.NODE_ENV === "production";
 
-  console.log("railway " + isRailway + " is production " + isProduction);
-
-  if (!isProduction && !isRailway) {
+  if (!isProduction) {
     console.log("💻 Running in Local Development Mode");
     return getDate31DaysEarlier();
   } else {
