@@ -5,7 +5,7 @@ const router = express.Router();
 const ordersController = require("../controllers/orders.js");
 const wrapAsync = require("../utils/error-handler/wrapAsync.js");
 
-router.get("/daily-updates", wrapAsync(ordersController.dailyUpdates));
+router.get("/updates", wrapAsync(ordersController.dailyUpdates));
 
 router.get("/delivers", wrapAsync(ordersController.deliveredOrders));
 
