@@ -10,7 +10,7 @@
     </div>
   </div>
   <div class="update-data">
-    <div class="text">To update the data, click this button</div>
+    <div class="text">To update customer's data, click this button</div>
     <button
       class="btn-primary update-data-btn"
       onclick="window.location.href='/orders/update-data'"
@@ -155,6 +155,13 @@ h78.747C231.693,100.736,232.77,106.162,232.77,111.694z"
 <script>
   const btn = document.querySelector(".update-data-btn");
   const updatingData = document.querySelector(".updating-data");
+  const textEl = document.querySelector(".update-data .text");
+
+  window.addEventListener("load", () => {
+    if (btn && btn.disabled) {
+      textEl.textContent = "All attempts of updating data have been used";
+    }
+  });
 
   btn.addEventListener("click", () => {
     btn.disabled = true;
