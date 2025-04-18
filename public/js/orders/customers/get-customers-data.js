@@ -18,7 +18,7 @@ async function customersData(page) {
           .catch(() => null);
 
         if (!findTable) {
-          console.log("⚠️ Table not found! Retrying...");
+          console.error("⚠️ Table not found! Retrying...");
           setTimeout(async () => {
             await fillDateInput(page); // Refill the date input
             return await scrapeCustomers(page); // Retry scraping
@@ -45,11 +45,8 @@ async function customersData(page) {
 
           // Click the next page button to load the next page
           await page.click(nextPageBtn);
-          console.log("more data loaded");
           // Wait for the page to load before continuing the loop
         }
-        // Log the combined data collected from all pages
-        console.log("Customers data founded");
       } catch (error) {
         console.error("Error occurred while scraping:", error.message);
         await page.reload({ waitUntil: "networkidle2" });

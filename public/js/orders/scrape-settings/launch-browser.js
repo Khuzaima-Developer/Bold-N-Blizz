@@ -38,14 +38,14 @@ async function getBrowserInstance() {
       timeout: 30 * 60 * 1000,
     });
   } else {
-    console.log("Browser already exists");
+    console.error("Browser already exists");
   }
   return browser;
 }
 
 async function useExistingPage() {
+  let browser = await getBrowserInstance();
   try {
-    let browser = await getBrowserInstance();
     let pages = await browser.pages();
 
     if (pages.length > 0) {
@@ -55,10 +55,18 @@ async function useExistingPage() {
     }
   } catch (error) {
     console.error(`Error occurred: ${error.message}`);
-    console.log("Retrying...");
 
+    await browser.close();
     await new Promise((resolve) => setTimeout(resolve, 5000)); // Wait 5 seconds before retrying
     return useExistingPage(); // Retry the function recursively
+  }
+}
+
+async function closeBrowserIfExists() {
+  if (browser) {
+    await browser.close();
+    browser = null;
+    console.log("✅ Browser closed successfully.");
   }
 }
 
@@ -73,7 +81,7 @@ async function handleDialog(page) {
 
       if (!dialog.handled) {
         await dialog.dismiss();
-        console.log("Dialog dismissed.", dialog.message());
+        console.error("Dialog dismissed.", dialog.message());
       }
     } catch (error) {
       console.error("Error handling dialog:", error.message);
@@ -93,4 +101,9 @@ function monitorMemoryUsage() {
       🔴 External: ${(memoryUsage.external / 1024 / 1024).toFixed(2)} MB`);
 }
 
-module.exports = { useExistingPage, monitorMemoryUsage, handleDialog };
+module.exports = {
+  useExistingPage,
+  monitorMemoryUsage,
+  handleDialog,
+  closeBrowserIfExists,
+};

@@ -8,6 +8,7 @@ const {
   useExistingPage,
   monitorMemoryUsage,
   handleDialog,
+  closeBrowserIfExists,
 } = require("./scrape-settings/launch-browser.js");
 const { setupInterception } = require("./scrape-settings/interception.js");
 const { clearQsrPage } = require("./scrape-settings/clear-qsr-page.js");
@@ -16,20 +17,9 @@ const {
 } = require("./customerTracking/extract-trackings.js");
 
 const scrapeAllData = async () => {
+  await closeBrowserIfExists();
+  const page = await useExistingPage();
   try {
-    const scrape = await Timer.findOne({ name: "scrapeAllData" });
-    if (scrape.running) {
-      console.log("Scraping is already in progress.");
-      return;
-    }
-
-    await Timer.findOneAndUpdate(
-      { name: "scrapeAllData" },
-      { $set: { running: true } }
-    );
-
-    const page = await useExistingPage();
-
     await page.setCacheEnabled(false);
 
     await handleDialog(page);
@@ -39,8 +29,6 @@ const scrapeAllData = async () => {
     await page.setUserAgent(
       "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36"
     );
-
-    // Check if the current URL is the login page
 
     await loginPortal(page);
     const currentUrl = await page.url();
@@ -73,20 +61,22 @@ const scrapeAllData = async () => {
 
     await navigateTrackings(page);
 
-    await addRefToCustomers();
+    addRefToCustomers();
 
-    console.log("All data scraped");
     await Timer.findOneAndUpdate(
       { name: "scrapeAllData" },
-      { $set: { running: false } }
+      { $set: { running: false, updatedTime: new Date(Date.now()) } }
     );
 
     // Kill the browser process forcefully
     await page.close();
-
-    console.log("✅ Browser closed successfully.");
+    await closeBrowserIfExists();
   } catch (e) {
-    console.log("There is an error while scrapping the whole data");
+    console.error("There is an error while scrapping the whole data");
+    await Timer.findOneAndUpdate(
+      { name: "scrapeAllData" },
+      { $set: { running: false, updatedTime: new Date(Date.now()) } }
+    );
     console.error(e);
   }
 };

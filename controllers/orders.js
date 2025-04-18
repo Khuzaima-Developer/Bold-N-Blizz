@@ -2,11 +2,12 @@
 const ExpressError = require("../utils/error-handler/ExpressError.js");
 const Customer = require("../models/customers.js");
 const CustomerTracking = require("../models/customer-tracking.js");
-const moment = require("moment");
 const {
   monthEarlierDate,
   formatDate,
 } = require("../public/js/orders/customers/take-out-customers.js");
+const { scrapeAllData } = require("../public/js/orders/scraper.js");
+const Timer = require("../models/timer.js");
 
 const startDate = monthEarlierDate();
 const endDate = formatDate(new Date());
@@ -19,7 +20,6 @@ module.exports.deliveredOrders = async (req, res, next) => {
     }).populate("trackingId");
 
     if (!deliveredOrders || deliveredOrders.length === 0) {
-      console.log("No delivered orders found.");
       return res.render("pages/delivered-orders.ejs", { deliveredOrders: [] });
     }
 
@@ -148,7 +148,7 @@ module.exports.undelivers = async (req, res, next) => {
   }
 };
 
-module.exports.dailyUpdates = async (req, res, next) => {
+module.exports.orderUpdates = async (req, res, next) => {
   try {
     // Define the date range for 1 day ago
     function todayDateWithInitialTime() {
@@ -196,5 +196,52 @@ module.exports.dailyUpdates = async (req, res, next) => {
   } catch (e) {
     console.error("An error occurred while processing daily updates:", e);
     next(new ExpressError("Failed to retrieve daily updates.", 500)); // Pass the error to the global error handler
+  }
+};
+
+module.exports.updateData = async (req, res, next) => {
+  try {
+    const timer = await Timer.findOne({ name: "scrapeAllData" });
+    const thirtySixHoursAgo = new Date(Date.now() - 36 * 60 * 60 * 1000);
+    let timeField = timer.timer;
+    const currentTime = Date.now();
+    const timeDifference = currentTime - timeField;
+
+    if (timer.running) {
+      res.redirect(req.get("Referer") || "/orders/updates");
+      console.error("Scraping is already in progress.");
+      return;
+    }
+
+    if (timeField < thirtySixHoursAgo) {
+      timeField = thirtySixHoursAgo;
+      await timer.save();
+    }
+
+    await Timer.findOneAndUpdate(
+      { name: "scrapeAllData" },
+      { $set: { running: true } }
+    );
+
+    if (req.session.updated) {
+      scrapeAllData();
+      delete req.session.updated;
+    } else if (timeDifference > 12 * 60 * 60 * 1000) {
+      // If time is more than 12 hours, start the scraping process
+      timeField = new Date(timeField.getTime() + 12 * 60 * 60 * 1000); // Add 12 hours
+      await Timer.findOneAndUpdate(
+        { name: "scrapeAllData" },
+        { $set: { timer: timeField } }
+      );
+      scrapeAllData();
+    } else {
+      // If the time is less than 12 hours, show a flash message and return
+      req.flash("error", "The time is less than 12 hours. Please wait.");
+      return res.redirect(req.get("Referer") || "/orders/updates");
+    }
+
+    return res.redirect(req.get("Referer") || "/orders/updates");
+  } catch (e) {
+    console.error("An error occurred while processing update data:", e);
   }
 };

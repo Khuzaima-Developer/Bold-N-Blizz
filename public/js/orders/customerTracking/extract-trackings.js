@@ -40,16 +40,11 @@ async function extractingData(page, currentBatch) {
       });
     });
 
-    console.log(
-      `tracking ${trackingData.length} batches ${currentBatch.length}`
-    );
     if (trackingData.length <= currentBatch.length - 3) {
-      console.log("All data not extracted successfully.");
       await extractingData(page, currentBatch);
     }
 
     if (!Array.isArray(trackingData) || trackingData.length === 0) {
-      console.warn("⚠ No tracking data found.");
       return;
     }
 
@@ -69,9 +64,6 @@ async function extractingData(page, currentBatch) {
 
         if (hasChanged) {
           await CustomerTracking.updateTrackings(tracking);
-          console.log(
-            `✅ Tracking data for ID ${tracking.trackingId} updated.`
-          );
         }
       } catch (err) {
         console.error(
@@ -91,7 +83,7 @@ async function autoScroll(page) {
   await page.evaluate(async () => {
     await new Promise((resolve) => {
       let totalHeight = 0;
-      const distance = window.innerHeight * 0.8; // 80% of viewport height
+      const distance = window.innerHeight * 0.95; // 90% of viewport height
       const timer = setInterval(() => {
         let scrollHeight = document.body.scrollHeight;
         window.scrollBy(0, distance);
@@ -140,7 +132,7 @@ async function navigateTrackings(page) {
     }
 
     if (tracking.running) {
-      console.log("⚠️ Function already extracting customer data.");
+      console.error("⚠️ Function already extracting customer data.");
       return;
     }
 
@@ -154,7 +146,7 @@ async function navigateTrackings(page) {
     remainingCNs = remainingCNs.map((cn) => cn._id); // Extract CN values
 
     if (remainingCNs.length === 0) {
-      console.log("⚠️ No CNs found to process.");
+      console.error("⚠️ No CNs found to process.");
       return;
     }
 
@@ -165,6 +157,11 @@ async function navigateTrackings(page) {
     await getTrackingData(page, remainingCNs);
   } catch (err) {
     console.error("❌ Error navigating trackings:", err.message);
+    await Timer.findOneAndUpdate(
+      { name: "InactiveTime" },
+      { $set: { running: false } }
+    );
+    await navigateTrackings(page);
   } finally {
     await Timer.findOneAndUpdate(
       { name: "InactiveTime" },

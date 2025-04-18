@@ -17,11 +17,12 @@ const MongoStore = require("connect-mongo");
 const mongoose = require("mongoose");
 
 // require pages
-const ExpressError = require("./utils/error-handler/ExpressError");
+const ExpressError = require("./utils/error-handler/ExpressError.js");
 const {
   userActivityDetected,
   scheduleScrape,
-} = require("./public/js/orders/updates/scrape-timeout.js");
+} = require("./public/js/orders/updates/scrape-execution.js");
+const Timer = require("./models/timer.js");
 
 // port
 let port = process.env.PORT;
@@ -44,7 +45,7 @@ main() // call the main function to connect to MongoDB
     console.log("Connected to MongoDB!");
   })
   .catch((error) => {
-    console.log("Failed to connect to MongoDB!");
+    console.error("Failed to connect to MongoDB!");
     console.error(error); // Log the actual error for debugging
   });
 
@@ -57,7 +58,7 @@ let store = MongoStore.create({
 });
 
 store.on("error", function (e) {
-  console.log("Session Store Error", e);
+  console.error("Session Store Error", e);
 });
 
 // session options
@@ -95,15 +96,56 @@ app.listen(port, () => {
 });
 
 // res.locals
-app.use((req, res, next) => {
+app.use(async (req, res, next) => {
+  const dataTimer = await Timer.findOne({ name: "scrapeAllData" });
+  if (!dataTimer || !dataTimer.updatedTime) {
+    res.locals.remainingTime = "The data isn't updated yet"; // Default value if no data
+    return next();
+  }
+  const updateTime = new Date(dataTimer.updatedTime);
+  const isRunning = dataTimer.running;
+  const timer = new Date(dataTimer.timer);
+
+  res.locals.timer = timer;
+  res.locals.isRunning = isRunning;
+  res.locals.updatedTime = updateTime; // Use the timer function
   res.locals.success = req.flash("success");
   res.locals.error = req.flash("error");
   next();
 });
 
-app.use((req, res, next) => {
-  userActivityDetected();
-  next();
+app.use("/orders", async (req, res, next) => {
+  try {
+    const now = Date.now();
+    const lastActivity = await Timer.findOne({ name: "InactiveTime" });
+
+    if (lastActivity) {
+      const inActiveTime = now - lastActivity.timer;
+
+      if (inActiveTime > 6 * 60 * 60 * 1000) {
+        req.session.updated = true;
+
+        await Timer.findOneAndUpdate(
+          { name: "InactiveTime" },
+          { timer: now },
+          { upsert: true }
+        );
+
+        return res.redirect("/orders/update-data"); // RETURN TO END
+      }
+    }
+
+    await Timer.findOneAndUpdate(
+      { name: "InactiveTime" },
+      { timer: now },
+      { upsert: true }
+    );
+
+    next(); // only if no redirect
+  } catch (err) {
+    console.error("Middleware error:", err);
+    next(err);
+  }
 });
 
 scheduleScrape();

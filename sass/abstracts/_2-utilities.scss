@@ -1,3 +1,33 @@
 .d-none {
-    display: none !important;
+  display: none !important;
+}
+
+.btn-primary {
+  padding: 0.5rem 1rem;
+  border-radius: 0.7rem;
+  font-size: 1.05rem;
+  background-color: rgba(var(--color-primary-rgb), 0.85);
+  color: var(--color-white);
+  border: 2px solid var(--color-primary-dark);
+  cursor: pointer;
+  transition: all 0.2s ease-in-out;
+  outline: none;
+
+  &:hover {
+    background-color: rgba(var(--color-primary-rgb), 0.75);
+  }
+
+  &:active {
+    scale: 1.03;
+  }
+
+  /* Disable styling */
+  &:disabled {
+    opacity: 0.7;
+    cursor: not-allowed; /* Change cursor to show it's disabled */
+
+    &:active {
+      scale: 1;
+    }
+  }
 }

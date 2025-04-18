@@ -2,10 +2,8 @@ function dateMethod() {
   const isProduction = process.env.NODE_ENV === "production";
 
   if (!isProduction) {
-    console.log("💻 Running in Local Development Mode");
     return getDate31DaysEarlier();
   } else {
-    console.log("🚀 Running in Deployment Mode (Railway or Production)");
     return getDeployment31DaysEarlier();
   }
 }
@@ -20,7 +18,6 @@ function getDate31DaysEarlier() {
   const year = currentDate.getFullYear();
   const month = String(currentDate.getMonth() + 1).padStart(2, "0"); // Months are zero-based
   const day = String(currentDate.getDate()).padStart(2, "0");
-  console.log("production");
   return `${day}-${month}-${year}`;
 }
 
@@ -31,7 +28,6 @@ function getDeployment31DaysEarlier() {
   const year = currentDate.getFullYear();
   const month = String(currentDate.getMonth() + 1).padStart(2, "0"); // Months are zero-based
   const day = String(currentDate.getDate()).padStart(2, "0");
-  console.log("deployment");
 
   return `${month}-${day}-${year}`; // Change order to DD-MM-YYYY
 }
@@ -54,15 +50,15 @@ async function typeStartDate(page, startDateSelector, date31DaysEarlier) {
     date31DaysEarlier
   );
 
-  await page.type(startDateSelector, date31DaysEarlier, { delay: 1000 });
+  await page.type(startDateSelector, date31DaysEarlier, { delay: 100 });
 
   const dateValue = await page.evaluate((selector) => {
     const element = document.querySelector(selector);
     return element ? element.value : "Element not found";
   }, startDateSelector); // Replace with the actual selector
 
-  console.log("Input value: " + dateValue + ", Expected: " + date31DaysEarlier);
-  await new Promise((resolve) => setTimeout(resolve, 500));
+  // console.log("Input value: " + dateValue + ", Expected: " + date31DaysEarlier);
+  await new Promise((resolve) => setTimeout(resolve, 50));
 }
 
 async function verifyDateInput(page) {
@@ -78,7 +74,7 @@ async function verifyDateInput(page) {
   await page.waitForSelector(startDateSelector, { visible: true });
 
   if (currentDateValue !== date31DaysEarlier) {
-    console.log(
+    console.error(
       `Date mismatch. Inp date: ${currentDateValue} expected: ${date31DaysEarlier}`
     );
     await fillDateInput(page);
@@ -92,16 +88,12 @@ async function fillDateInput(page) {
 
   const date31DaysEarlier = dateMethod();
 
-  if (!inputDate) {
-    console.log("Date input not found. Navigating to reset the page...");
-  }
-
   return new Promise(async (resolve, reject) => {
     try {
       // Simulate user interaction to set the date
       await typeStartDate(page, startDateSelector, date31DaysEarlier);
 
-      await new Promise((resolve) => setTimeout(resolve, 3000));
+      await new Promise((resolve) => setTimeout(resolve, 1000));
       await page.click(dateSearchBtn);
 
       await verifyDateInput(page);

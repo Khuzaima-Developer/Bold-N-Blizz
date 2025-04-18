@@ -1,5 +1,5 @@
 document.addEventListener("DOMContentLoaded", () => {
-  const cardTable = document.querySelector(".card-table");
+  const cardTable = document.querySelector(".orders-card");
   const table = document.querySelector(".table");
   const noDataMessage = document.querySelector(".no-data");
   const noDataText = document.querySelector(".no-data_text");
@@ -14,9 +14,9 @@ document.addEventListener("DOMContentLoaded", () => {
       noDataText.textContent = "No Delivered orders";
     } else if (currentPath === "/orders/undelivers") {
       noDataText.textContent = "No Undelivered orders";
-    } else if (currentPath === "/orders/daily-updates") {
+    } else if (currentPath === "/orders/updates") {
       noDataText.textContent = "No Daily Updates";
-    }else {
+    } else {
       noDataMessage.style.display = "none";
     }
   }
@@ -52,5 +52,3 @@ document.addEventListener("DOMContentLoaded", () => {
     if (noDataMessage) noDataMessage.classList.remove("d-none");
   }
 });
-
-console.log("Script executed successfully.");

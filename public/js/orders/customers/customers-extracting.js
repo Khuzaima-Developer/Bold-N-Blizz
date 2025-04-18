@@ -32,9 +32,6 @@ async function addRefToCustomers() {
           // Add trackingId to customer
           customer.trackingId = tracking._id;
           await customer.save();
-          console.log(
-            `Tracking ID ${tracking._id} added to Customer ${customer.CN}`
-          );
         }
       }
     }

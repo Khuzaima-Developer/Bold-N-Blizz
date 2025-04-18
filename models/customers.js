@@ -94,13 +94,11 @@ customerSchema.statics.newUpdateCustomers = async function (dataArray) {
             },
             { new: true, upsert: false } // Update or return the updated document without creating a new one
           );
-          console.log(`Customer updated ${existingCustomer.CN}`);
         }
       } else {
         // Create a new customer if the CN doesn't exist
         const newCustomer = new this(data);
         await newCustomer.save();
-        console.log(`Created new customer ${newCustomer.CN}`);
       }
     }
   } catch (error) {
@@ -133,7 +131,6 @@ customerSchema.statics.deleteOldCustomers = async function () {
       if (bookingDate < cutoffDate) {
         // Delete the customer if the booking is older than the cutoff date
         await this.deleteOne({ _id: customer._id });
-        console.log(`Deleted old customer with CN: ${customer.CN}`);
       }
     }
   } catch (err) {

@@ -1,17 +1,19 @@
 :root {
-  --color-primary: #e25a0c;
+  --color-primary-dark: #c34b06;
+  --color-primary: #ff670f;
   --color-secondary: #f4f6f9;
   --color-white: #ffffff;
   --color-black: #000000;
   --color-text: #4c5156;
-  --color-head: #34395e;
+  --color-head: #0e1d90;
 
-  --color-primary-rgb: 226, 90, 12;
+  --color-primary-dark-rgb: 195, 75, 6;
+  --color-primary-rgb: 255, 103, 15;
   --color-secondary-rgb: 244, 246, 249;
   --color-white-rgb: 255, 255, 255;
   --color-black-rgb: 0, 0, 0;
   --color-text-rgb: 76, 81, 86;
-  --color-head-rgb: 52, 57, 94;
+  --color-head-rgb: 58, 68, 146;
 
   // Use the converted RGB in rgba()
   --color-secondary-light: rgba(var(--color-secondary-rgb), 0.7);

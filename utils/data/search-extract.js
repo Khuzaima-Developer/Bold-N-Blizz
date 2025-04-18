@@ -32,7 +32,6 @@ document.addEventListener("DOMContentLoaded", () => {
         const columnIndex = headerColumns.findIndex((th) => th.contains(input));
 
         if (columnIndex === -1) {
-          console.log("  Column index not found! Skipping...");
           return true;
         }
 

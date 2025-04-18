@@ -74,7 +74,6 @@ customerTrackingSchema.statics.updateTrackings = async function (tracking) {
         status: tracking.status || "N/A",
         updatedAt: Date.now(),
       });
-      console.log(`Tracking ID ${tracking.trackingId} created successfully.`);
     }
   } catch (err) {
     console.error("Error updating tracking:", err.message);
